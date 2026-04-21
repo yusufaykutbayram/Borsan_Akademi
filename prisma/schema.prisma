@@ -1,0 +1,145 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+  directUrl = env("DIRECT_URL")
+}
+
+model User {
+  id               String   @id @default(uuid())
+  name             String
+  tc_number        String   @unique
+  password_hash    String
+  role             String   @default("EMPLOYEE") // "ADMIN" or "EMPLOYEE"
+  language         String   @default("tr")
+  xp_points        Int      @default(0)
+  force_pw_change  Boolean  @default(true)
+  created_at       DateTime @default(now())
+
+  // Relations
+  training_progress   TrainingProgress[]
+  exam_results        ExamResult[]
+  certificates        Certificate[]
+  user_badges         UserBadge[]
+  competitions        CompetitionSession[]
+}
+
+model Training {
+  id          String   @id @default(uuid())
+  title       String
+  description String?
+  type        String   @default("VIDEO") // VIDEO, PDF, FILE
+  file_url    String?
+  created_at  DateTime @default(now())
+
+  progress    TrainingProgress[]
+  exams       Exam[]
+}
+
+model TrainingProgress {
+  id                  String   @id @default(uuid())
+  user_id             String
+  training_id         String
+  status              String   @default("IN_PROGRESS") // IN_PROGRESS, COMPLETED
+  progress_percentage Int      @default(0)
+  updated_at          DateTime @updatedAt
+  
+  user     User     @relation(fields: [user_id], references: [id], onDelete: Cascade)
+  training Training @relation(fields: [training_id], references: [id], onDelete: Cascade)
+
+  @@unique([user_id, training_id])
+}
+
+model Exam {
+  id             String   @id @default(uuid())
+  training_id    String
+  title          String
+  pass_threshold Int      @default(70)
+  
+  training Training @relation(fields: [training_id], references: [id], onDelete: Cascade)
+  questions Question[]
+  results   ExamResult[]
+}
+
+model Question {
+  id         String   @id @default(uuid())
+  exam_id    String?  // Can be null if it's purely a competition question bank question
+  category   String   // PRODUCTION, QUALITY, ISG
+  text       String
+  time_limit Int      @default(20)
+  
+  exam    Exam?     @relation(fields: [exam_id], references: [id], onDelete: SetNull)
+  answers Answer[]
+}
+
+model Answer {
+  id          String  @id @default(uuid())
+  question_id String
+  text        String
+  is_correct  Boolean @default(false)
+  
+  question Question @relation(fields: [question_id], references: [id], onDelete: Cascade)
+}
+
+model ExamResult {
+  id             String   @id @default(uuid())
+  user_id        String
+  exam_id        String
+  score          Int
+  is_passed      Boolean
+  next_retake_at DateTime?
+  taken_at       DateTime @default(now())
+
+  user User @relation(fields: [user_id], references: [id], onDelete: Cascade)
+  exam Exam @relation(fields: [exam_id], references: [id], onDelete: Cascade)
+}
+
+model Certificate {
+  id          String   @id @default(uuid())
+  user_id     String
+  training_id String
+  cert_number String   @unique
+  url         String
+  issued_at   DateTime @default(now())
+
+  user User @relation(fields: [user_id], references: [id], onDelete: Cascade)
+}
+
+model Badge {
+  id          String   @id @default(uuid())
+  name        String
+  description String
+  required_xp Int
+  icon_id     String
+
+  users UserBadge[]
+}
+
+model UserBadge {
+  id         String   @id @default(uuid())
+  user_id    String
+  badge_id   String
+  awarded_at DateTime @default(now())
+
+  user  User  @relation(fields: [user_id], references: [id], onDelete: Cascade)
+  badge Badge @relation(fields: [badge_id], references: [id], onDelete: Cascade)
+
+  @@unique([user_id, badge_id])
+}
+
+model CompetitionSession {
+  id           String   @id @default(uuid())
+  user_id      String
+  category     String
+  score        Int      @default(0)
+  duration_sec Int      @default(0)
+  date         DateTime @default(now())
+
+  user User @relation(fields: [user_id], references: [id], onDelete: Cascade)
+}
