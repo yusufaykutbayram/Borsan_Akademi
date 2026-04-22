@@ -35,8 +35,8 @@ export default async function TrainingPage() {
                                         padding: '4px 10px', 
                                         borderRadius: '12px', 
                                         fontSize: '12px',
-                                        background: t.type === 'VIDEO' ? 'rgba(37, 99, 235, 0.15)' : 'rgba(245, 158, 11, 0.15)',
-                                        color: t.type === 'VIDEO' ? 'var(--primary)' : 'var(--secondary)'
+                                        background: t.type === 'VIDEO' ? 'rgba(37, 99, 235, 0.15)' : t.type === 'PTX' ? 'rgba(236, 72, 153, 0.15)' : 'rgba(245, 158, 11, 0.15)',
+                                        color: t.type === 'VIDEO' ? 'var(--primary)' : t.type === 'PTX' ? '#ec4899' : 'var(--secondary)'
                                     }}>
                                         {t.type}
                                     </span>

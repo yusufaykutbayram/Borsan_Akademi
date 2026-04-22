@@ -57,7 +57,7 @@ export default async function DashboardPage() {
                     <div key={t.id} className="glass-panel" style={{ padding: '20px', display: 'flex', flexDirection: 'column', gap: '16px' }}>
                         <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start' }}>
                             <div>
-                                <span style={{ fontSize: '10px', background: 'rgba(255,255,255,0.1)', padding: '4px 8px', borderRadius: '8px', color: 'var(--text-muted)', marginBottom: '8px', display: 'inline-block' }}>{t.training.type === 'VIDEO' ? 'VİDEO' : 'DÖKÜMAN'}</span>
+                                <span style={{ fontSize: '10px', background: 'rgba(255,255,255,0.1)', padding: '4px 8px', borderRadius: '8px', color: 'var(--text-muted)', marginBottom: '8px', display: 'inline-block' }}>{t.training.type === 'VIDEO' ? 'VİDEO' : t.training.type === 'PTX' ? 'SUNUM' : 'DÖKÜMAN'}</span>
                                 <h4 style={{ margin: '0 0 4px 0', fontSize: '15px', lineHeight: '1.4' }}>{t.training.title}</h4>
                             </div>
                             <div style={{ width: '48px', height: '48px', borderRadius: '50%', border: '4px solid rgba(255,255,255,0.05)', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '12px', fontWeight: 'bold', borderTopColor: 'var(--primary)' }}>

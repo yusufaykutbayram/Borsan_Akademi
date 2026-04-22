@@ -34,31 +34,34 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
     CredentialsProvider({
       name: "Borsan Akademi",
       credentials: {
-        tc_number: { label: "TC Kimlik No", type: "text" },
+        name: { label: "Ad Soyad", type: "text" },
         password: { label: "Şifre", type: "password" }
       },
       async authorize(credentials) {
-        if (!credentials?.tc_number || !credentials?.password) {
+        if (!credentials?.name || !credentials?.password) {
           return null;
         }
 
-        const user = await prisma.user.findUnique({
-          where: { tc_number: credentials.tc_number as string }
+        const users = await prisma.user.findMany({
+          where: { name: credentials.name as string }
         });
 
-        if (!user) return null;
+        if (users.length === 0) return null;
 
-        const isPasswordValid = await bcrypt.compare(credentials.password as string, user.password_hash);
+        for (const user of users) {
+          const isPasswordValid = await bcrypt.compare(credentials.password as string, user.password_hash);
+          if (isPasswordValid) {
+            return {
+              id: user.id,
+              name: user.name,
+              role: user.role,
+              tc_number: user.tc_number,
+              force_pw_change: user.force_pw_change
+            };
+          }
+        }
 
-        if (!isPasswordValid) return null;
-
-        return {
-          id: user.id,
-          name: user.name,
-          role: user.role,
-          tc_number: user.tc_number,
-          force_pw_change: user.force_pw_change
-        };
+        return null;
       }
     })
   ],

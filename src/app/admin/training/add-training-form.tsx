@@ -33,6 +33,7 @@ export function AddTrainingForm() {
                     <select className="input-field" id="type" name="type" style={{ appearance: 'none', cursor: 'pointer' }}>
                         <option value="VIDEO" style={{ color: 'black' }}>Video (MP4/YouTube vb.)</option>
                         <option value="PDF" style={{ color: 'black' }}>Döküman (PDF)</option>
+                        <option value="PTX" style={{ color: 'black' }}>Sunum (PTX/PPTX)</option>
                     </select>
                 </div>
             </div>

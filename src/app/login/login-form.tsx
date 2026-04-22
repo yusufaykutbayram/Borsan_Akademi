@@ -19,25 +19,25 @@ export function LoginForm() {
   return (
     <form action={dispatch}>
       <div className="form-group">
-        <label className="form-label" htmlFor="tc_number">TC Kimlik No (İlk 6 Hane)</label>
+        <label className="form-label" htmlFor="name">Ad Soyad</label>
         <input 
           className="input-field" 
-          id="tc_number" 
-          name="tc_number" 
+          id="name" 
+          name="name" 
           type="text" 
-          maxLength={6} 
           required 
-          placeholder="Örn: 123456" 
+          placeholder="Örn: Ahmet Yılmaz" 
         />
       </div>
       
       <div className="form-group">
-        <label className="form-label" htmlFor="password">Şifre</label>
+        <label className="form-label" htmlFor="password">Şifre (TC Kimlik No İlk 6 Hane)</label>
         <input 
           className="input-field" 
           id="password" 
           name="password" 
           type="password" 
+          maxLength={6}
           required 
           placeholder="••••••" 
         />
