@@ -42,7 +42,7 @@ export async function addTraining(formData: FormData) {
       })
     }
     
-    revalidatePath("/admin/training")
+    revalidatePath("/admin/trainings")
     return { success: true }
   } catch (e: unknown) {
     console.error(e)
