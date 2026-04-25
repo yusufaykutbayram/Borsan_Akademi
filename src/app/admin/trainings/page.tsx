@@ -11,68 +11,65 @@ export default async function TrainingPage() {
         include: { exams: true }
     })
 
+    const typeConfig: Record<string, { label: string, color: string, bg: string }> = {
+        VIDEO: { label: 'Video', color: 'var(--primary)', bg: 'rgba(37, 99, 235, 0.15)' },
+        PTX: { label: 'Sunum', color: '#ec4899', bg: 'rgba(236, 72, 153, 0.15)' },
+        REVEAL: { label: 'İnteraktif', color: '#8b5cf6', bg: 'rgba(139, 92, 246, 0.15)' },
+        PDF: { label: 'Döküman', color: 'var(--secondary)', bg: 'rgba(245, 158, 11, 0.15)' },
+        FILE: { label: 'Dosya', color: 'var(--text-muted)', bg: 'rgba(0, 0, 0, 0.05)' }
+    }
+
     return (
         <div className="animate-fade-in">
-            <h1 style={{ fontSize: '28px', marginBottom: '32px' }}>Eğitim İçerikleri & Yönetimi</h1>
+            <h1 className="text-3xl font-black text-secondary mb-8">Eğitim İçerikleri & Yönetimi</h1>
             
             <AddTrainingForm />
 
-            <div className="glass-panel" style={{ padding: '0', overflow: 'hidden' }}>
-                <table style={{ width: '100%', textAlign: 'left', borderCollapse: 'collapse' }}>
-                    <thead style={{ background: 'rgba(0,0,0,0.2)' }}>
-                        <tr>
-                            <th style={{ padding: '16px 20px', color: 'var(--text-muted)', fontWeight: 500 }}>Eğitim Adı</th>
-                            <th style={{ padding: '16px 20px', color: 'var(--text-muted)', fontWeight: 500 }}>Materyal</th>
-                            <th style={{ padding: '16px 20px', color: 'var(--text-muted)', fontWeight: 500 }}>Kayıt Tarihi</th>
-                            <th style={{ padding: '16px 20px', color: 'var(--text-muted)', fontWeight: 500 }}>İşlem</th>
+            <div className="bg-white rounded-[2rem] shadow-premium border border-gray-100 overflow-hidden">
+                <table className="w-full text-left border-collapse">
+                    <thead>
+                        <tr className="bg-gray-50/50">
+                            <th className="px-8 py-5 text-[10px] font-bold text-gray-400 uppercase tracking-widest border-b border-gray-100">Eğitim Adı</th>
+                            <th className="px-8 py-5 text-[10px] font-bold text-gray-400 uppercase tracking-widest border-b border-gray-100">Materyal</th>
+                            <th className="px-8 py-5 text-[10px] font-bold text-gray-400 uppercase tracking-widest border-b border-gray-100">Kayıt Tarihi</th>
+                            <th className="px-8 py-5 text-[10px] font-bold text-gray-400 uppercase tracking-widest border-b border-gray-100 text-right">İşlem</th>
                         </tr>
                     </thead>
-                    <tbody>
-                        {trainings.map(t => (
-                            <tr key={t.id} style={{ borderBottom: '1px solid var(--glass-border)' }}>
-                                <td style={{ padding: '16px 20px', fontWeight: 500 }}>{t.title}</td>
-                                <td style={{ padding: '16px 20px' }}>
-                                    <span style={{ 
-                                        padding: '4px 10px', 
-                                        borderRadius: '12px', 
-                                        fontSize: '12px',
-                                        background: t.type === 'VIDEO' ? 'rgba(37, 99, 235, 0.15)' : t.type === 'PTX' ? 'rgba(236, 72, 153, 0.15)' : 'rgba(245, 158, 11, 0.15)',
-                                        color: t.type === 'VIDEO' ? 'var(--primary)' : t.type === 'PTX' ? '#ec4899' : 'var(--secondary)'
-                                    }}>
-                                        {t.type}
-                                    </span>
-                                </td>
-                                <td style={{ padding: '16px 20px', color: 'var(--text-muted)' }}>{t.created_at.toLocaleDateString('tr-TR')}</td>
-                                <td style={{ padding: '16px 20px' }}>
-                                    <form action={async () => {
-                                        'use server'
-                                        await deleteTraining(t.id)
-                                    }}>
-                                        <button 
-                                            type="submit"
-                                            className="btn" 
-                                            style={{ 
-                                                background: 'rgba(239, 68, 68, 0.1)', 
-                                                color: 'var(--danger)', 
-                                                border: '1px solid rgba(239, 68, 68, 0.2)',
-                                                padding: '6px 12px',
-                                                fontSize: '12px',
-                                                cursor: 'pointer'
-                                            }}
-                                            onClick={(e) => {
-                                                // We can't easily use confirm() in a server action form without a separate client component,
-                                                // but for now let's just make it a direct action for simplicity or use a client component.
-                                            }}
+                    <tbody className="divide-y divide-gray-50">
+                        {trainings.map(t => {
+                            const config = typeConfig[t.type] || typeConfig.FILE;
+                            return (
+                                <tr key={t.id} className="hover:bg-gray-50/30 transition-colors">
+                                    <td className="px-8 py-6 font-bold text-secondary">{t.title}</td>
+                                    <td className="px-8 py-6">
+                                        <span 
+                                            className="px-4 py-1.5 rounded-full text-[11px] font-bold uppercase tracking-wider"
+                                            style={{ backgroundColor: config.bg, color: config.color }}
                                         >
-                                            Sil
-                                        </button>
-                                    </form>
-                                </td>
-                            </tr>
-                        ))}
+                                            {config.label}
+                                        </span>
+                                    </td>
+                                    <td className="px-8 py-6 text-gray-400 font-medium">
+                                        {t.created_at.toLocaleDateString('tr-TR', { day: '2-digit', month: 'long', year: 'numeric' })}
+                                    </td>
+                                    <td className="px-8 py-6 text-right">
+                                        <form action={deleteTraining.bind(null, t.id)}>
+                                            <button 
+                                                type="submit"
+                                                className="bg-red-50 text-red-500 hover:bg-red-500 hover:text-white px-5 py-2 rounded-xl text-xs font-bold transition-all border border-red-100"
+                                            >
+                                                Sil
+                                            </button>
+                                        </form>
+                                    </td>
+                                </tr>
+                            )
+                        })}
                         {trainings.length === 0 && (
                             <tr>
-                                <td colSpan={4} style={{ padding: '32px', textAlign: 'center', color: 'var(--text-muted)' }}>Sistemde kayıtlı eğitim bulunamadı.</td>
+                                <td colSpan={4} className="px-8 py-20 text-center text-gray-400 font-medium italic">
+                                    Sistemde kayıtlı eğitim bulunamadı.
+                                </td>
                             </tr>
                         )}
                     </tbody>
