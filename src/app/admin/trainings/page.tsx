@@ -1,6 +1,7 @@
 import { prisma } from "@/lib/prisma"
 import { AddTrainingForm } from "./add-training-form"
 import { DeleteTrainingButton } from "./delete-button"
+import Link from "next/link"
 
 // Dynamically rendering
 export const dynamic = 'force-dynamic'
@@ -52,7 +53,13 @@ export default async function TrainingPage() {
                                     <td className="px-8 py-6 text-gray-400 font-medium">
                                         {t.created_at.toLocaleDateString('tr-TR', { day: '2-digit', month: 'long', year: 'numeric' })}
                                     </td>
-                                    <td className="px-8 py-6 text-right">
+                                    <td className="px-8 py-6 text-right flex items-center justify-end gap-3">
+                                        <Link 
+                                            href={`/admin/trainings/${t.id}`}
+                                            className="bg-gray-50 text-gray-500 hover:bg-secondary hover:text-white px-5 py-2 rounded-xl text-xs font-bold transition-all border border-gray-100"
+                                        >
+                                            Düzenle
+                                        </Link>
                                         <DeleteTrainingButton id={t.id} />
                                     </td>
                                 </tr>
