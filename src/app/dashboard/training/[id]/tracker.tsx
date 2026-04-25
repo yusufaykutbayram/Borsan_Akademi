@@ -24,13 +24,18 @@ export default function TrainingTracker({ trainingId, userId, type, initialProgr
     const videoRef = useRef<HTMLVideoElement>(null)
     const lastUpdateRef = useRef<number>(initialProgress)
 
-    // Sample slides for Reveal.js demonstration
-    const sampleSlides = [
-        { content: '<h1 style="color: #E30613; font-weight: 900;">Borsan Akademi</h1><p style="color: #666;">Modern Eğitim Deneyimine Hoş Geldiniz</p>' },
-        { content: '<h3 style="color: #333; font-weight: 800;">Neden Reveal.js?</h3><ul style="color: #555; text-align: left; display: inline-block;"><li>Hızlı ve Akıcı</li><li>Etkileşimli İçerik</li><li>Mobil Uyumlu</li></ul>' },
-        { content: '<h2 style="color: #E30613; font-weight: 800;">Eğitim Hedefleri</h2><p style="color: #666;">Bu bölümde kurumsal gelişim süreçlerini inceleyeceğiz.</p>' },
-        { content: '<h3 style="color: #333; font-weight: 800;">Hazırsanız Başlayalım!</h3><p style="color: #999;">Ok tuşlarını kullanarak ilerleyebilirsiniz.</p>' }
+    // Parse slides if REVEAL type
+    let displaySlides = [
+        { content: '<h1 style="color: #E30613; font-weight: 900;">Borsan Akademi</h1><p style="color: #666;">İçerik Yükleniyor...</p>' }
     ]
+
+    if (type === 'REVEAL' && fileUrl) {
+        try {
+            displaySlides = JSON.parse(fileUrl)
+        } catch (e) {
+            console.error("Reveal JSON parsing error:", e)
+        }
+    }
 
     // Handle Video Progress
     const handleVideoTimeUpdate = () => {
@@ -99,7 +104,7 @@ export default function TrainingTracker({ trainingId, userId, type, initialProgr
             <div className="bg-white rounded-[2rem] overflow-hidden shadow-premium border border-gray-100 flex flex-col items-center justify-center relative min-h-[500px]">
                 {isReveal ? (
                     <div className="w-full h-[600px]">
-                        <RevealViewer slides={sampleSlides} />
+                        <RevealViewer slides={displaySlides} />
                     </div>
                 ) : isYoutube ? (
                     <iframe 

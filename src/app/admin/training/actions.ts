@@ -6,9 +6,16 @@ export async function addTraining(formData: FormData) {
   const title = formData.get("title") as string
   const description = formData.get("description") as string
   const type = formData.get("type") as string
-  const file_url = formData.get("file_url") as string
+  let file_url = formData.get("file_url") as string
+  const content = formData.get("content") as string
 
-  if (!title || !type || !file_url) {
+  if (type === 'REVEAL') {
+    if (!content) return { error: "Lütfen slayt içeriklerini giriniz." }
+    const slides = content.split('---').map(s => ({ content: s.trim() }))
+    file_url = JSON.stringify(slides)
+  }
+
+  if (!title || !type || (!file_url && type !== 'REVEAL')) {
     return { error: "Lütfen gerekli alanları doldurunuz." }
   }
 
