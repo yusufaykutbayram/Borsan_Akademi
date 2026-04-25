@@ -15,6 +15,7 @@ export default async function LoginPage() {
     }
   }
 
+  return (
     <main className="min-h-screen bg-surface flex items-center justify-center p-4 animate-fade-in font-sans">
       <div className="max-w-md w-full space-y-8">
         <div className="text-center">
@@ -40,5 +41,5 @@ export default async function LoginPage() {
             © 2026 Borsan Kablo. Tüm hakları saklıdır.
         </p>
       </div>
-    </main>
+    );
 }
