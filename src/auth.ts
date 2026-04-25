@@ -43,7 +43,12 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
         }
 
         const users = await prisma.user.findMany({
-          where: { name: credentials.name as string }
+          where: {
+            OR: [
+              { name: { equals: credentials.name as string, mode: 'insensitive' } },
+              { tc_number: { equals: credentials.name as string, mode: 'insensitive' } }
+            ]
+          }
         });
 
         if (users.length === 0) return null;

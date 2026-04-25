@@ -3,16 +3,27 @@ const bcrypt = require('bcryptjs');
 const prisma = new PrismaClient();
 
 async function main() {
-  const password = 'Admin'; // Let's use 'Admin' as password for simplicity in testing
-  const hash = await bcrypt.hash(password, 10);
+  const hash = await bcrypt.hash('admin', 10);
   
-  const updatedUser = await prisma.user.updateMany({
-    where: { name: 'Admin' },
-    data: { password_hash: hash }
+  // Önce varsa eskiyi silelim veya doğrudan güncelleme yapalım
+  const user = await prisma.user.upsert({
+    where: { tc_number: 'admin' },
+    update: { 
+        password_hash: hash,
+        role: 'ADMIN',
+        name: 'Admin'
+    },
+    create: {
+      name: 'Admin',
+      tc_number: 'admin',
+      password_hash: hash,
+      role: 'ADMIN'
+    }
   });
   
-  console.log('Admin user(s) updated:', updatedUser.count);
-  console.log('New password is: Admin');
+  console.log('Şifre Başarıyla Sıfırlandı!');
+  console.log('TC: admin');
+  console.log('Şifre: admin');
 }
 
 main().catch(console.error).finally(() => prisma.$disconnect());
