@@ -17,58 +17,86 @@ export default async function CompetitionDashboard() {
     });
 
     return (
-        <div className="animate-fade-in">
-            <div style={{ textAlign: 'center', marginBottom: '32px' }}>
-                <span style={{ fontSize: '48px', display: 'inline-block', marginBottom: '16px', filter: 'drop-shadow(0 0 10px var(--primary-glow))' }}>🏆</span>
-                <h1 style={{ fontSize: '24px', margin: '0 0 8px 0' }}>Borsan Bilgi Yarışması</h1>
-                <p style={{ color: 'var(--text-muted)', margin: 0 }}>Günde 1 kez katıl, yeteneklerini göster ve XP kazan!</p>
+        <div className="max-w-4xl mx-auto space-y-12 animate-fade-in pb-20">
+            {/* Header */}
+            <div className="text-center space-y-4">
+                <div className="inline-flex items-center justify-center w-24 h-24 bg-primary/5 rounded-3xl mb-4">
+                    <span className="text-5xl">🏆</span>
+                </div>
+                <h1 className="text-4xl font-black text-secondary tracking-tight">Borsan Bilgi Yarışması</h1>
+                <p className="text-gray-500 max-w-lg mx-auto">Günde 1 kez katıl, yeteneklerini göster ve XP kazanarak liderlik tablosunda yüksel.</p>
             </div>
 
-            <div className="glass-card" style={{ marginBottom: '32px', textAlign: 'center' }}>
-                <h3 style={{ margin: '0 0 16px 0', fontSize: '18px' }}>Kurallar</h3>
-                <ul style={{ textAlign: 'left', color: 'var(--text-muted)', fontSize: '14px', lineHeight: '1.6', paddingLeft: '20px', marginBottom: '24px' }}>
-                    <li>Karşınıza karışık kategorilerden (Üretim, Kalite, İSG) 20 soru çıkacak.</li>
-                    <li>Her soru için tam 20 saniyeniz var. Süre biterse otomatik geçilir.</li>
-                    <li>Sınavdan çıkarsanız veya sekmeyi kapatırsanız otomatik diskalifiye olursunuz.</li>
-                    <li>Doğru cevap sayısı ve hıza bağlı olarak <strong style={{color:'var(--primary)'}}>XP ve Puan</strong> kazanırsınız.</li>
-                </ul>
-
-                {todaysSession ? (
-                    <div style={{ background: 'rgba(255,255,255,0.05)', padding: '16px', borderRadius: '12px', border: '1px solid var(--glass-border)' }}>
-                        <p style={{ margin: '0 0 8px 0', fontWeight: 'bold' }}>Bugünkü yarışma hakkınızı kullandınız.</p>
-                        <p style={{ margin: 0, fontSize: '14px', color: 'var(--text-muted)' }}>Turnuva Puanınız: <strong style={{ color: 'var(--primary)', fontSize: '18px' }}>{todaysSession.score}</strong> Puan</p>
+            {/* Rules Card */}
+            <div className="bg-white rounded-[2.5rem] p-10 sm:p-12 shadow-soft border border-gray-100">
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-12 items-center">
+                    <div className="space-y-6">
+                        <h3 className="text-xl font-bold text-secondary">Yarışma Kuralları</h3>
+                        <ul className="space-y-4">
+                            {[
+                                "20 farklı kategoriden seçilmiş sorular.",
+                                "Her soru için 20 saniye süre.",
+                                "Sekmeden ayrılmak diskalifiye sebebidir.",
+                                "Hızlı cevaplar ek bonus XP kazandırır."
+                            ].map((rule, i) => (
+                                <li key={i} className="flex items-start gap-3 text-gray-500 text-sm">
+                                    <span className="text-primary font-bold">{i + 1}.</span>
+                                    {rule}
+                                </li>
+                            ))}
+                        </ul>
                     </div>
-                ) : (
-                    <Link href="/dashboard/competition/play" className="btn btn-primary" style={{ fontSize: '18px', padding: '16px' }}>
-                        Yarışmaya Başla &rarr;
-                    </Link>
-                )}
+                    
+                    <div className="flex flex-col items-center justify-center p-8 bg-surface rounded-3xl border border-gray-50">
+                        {todaysSession ? (
+                            <div className="text-center space-y-2">
+                                <p className="text-xs font-bold text-gray-400 uppercase tracking-widest">Bugünkü Puanınız</p>
+                                <p className="text-5xl font-black text-primary">{todaysSession.score}</p>
+                                <p className="text-sm text-gray-500 font-medium">Yarın tekrar bekliyoruz!</p>
+                            </div>
+                        ) : (
+                            <div className="text-center space-y-6 w-full">
+                                <p className="text-sm text-gray-500">Hazır olduğunda başla düğmesine bas.</p>
+                                <Link href="/dashboard/competition/play" className="block w-full bg-secondary hover:bg-black text-white py-5 rounded-2xl font-bold text-lg transition-all shadow-xl shadow-black/10">
+                                    Yarışmaya Başla
+                                </Link>
+                            </div>
+                        )}
+                    </div>
+                </div>
             </div>
 
-            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '16px' }}>
-                <h3 style={{ fontSize: '18px', margin: 0 }}>Günlük Liderlik Tablosu</h3>
-            </div>
-            
-            <div className="glass-panel" style={{ padding: '0', overflow: 'hidden' }}>
-                <table style={{ width: '100%', textAlign: 'left', borderCollapse: 'collapse' }}>
-                    <tbody>
-                        <tr style={{ borderBottom: '1px solid var(--glass-border)', background: 'linear-gradient(90deg, rgba(230,0,0,0.2), transparent)' }}>
-                            <td style={{ padding: '16px', fontSize: '20px', width: '50px', textAlign: 'center' }}>🥇</td>
-                            <td style={{ padding: '16px', fontWeight: 'bold' }}>Ahmet Yılmaz</td>
-                            <td style={{ padding: '16px', textAlign: 'right', color: 'var(--primary)', fontWeight: 'bold' }}>450 Puan</td>
-                        </tr>
-                        <tr style={{ borderBottom: '1px solid var(--glass-border)' }}>
-                            <td style={{ padding: '16px', fontSize: '20px', width: '50px', textAlign: 'center' }}>🥈</td>
-                            <td style={{ padding: '16px', fontWeight: 'bold' }}>Ayşe Kaya</td>
-                            <td style={{ padding: '16px', textAlign: 'right', color: 'var(--text-main)', fontWeight: 'bold' }}>420 Puan</td>
-                        </tr>
-                        <tr>
-                            <td style={{ padding: '16px', fontSize: '16px', width: '50px', textAlign: 'center', color: 'var(--text-muted)' }}>4.</td>
-                            <td style={{ padding: '16px', color: 'var(--text-muted)' }}>{session?.user.name} (Siz)</td>
-                            <td style={{ padding: '16px', textAlign: 'right', color: 'var(--text-muted)' }}>{todaysSession ? todaysSession.score : '-'} Puan</td>
-                        </tr>
-                    </tbody>
-                </table>
+            {/* Ranking Section */}
+            <div className="space-y-6">
+                <h3 className="text-2xl font-bold text-secondary px-2">Günlük Sıralama</h3>
+                <div className="bg-white rounded-3xl shadow-soft border border-gray-100 overflow-hidden">
+                    <table className="w-full text-left border-collapse">
+                        <thead>
+                            <tr className="bg-surface border-b border-gray-100">
+                                <th className="p-6 text-[10px] font-bold text-gray-400 uppercase tracking-widest">Sıra</th>
+                                <th className="p-6 text-[10px] font-bold text-gray-400 uppercase tracking-widest">Kullanıcı</th>
+                                <th className="p-6 text-right text-[10px] font-bold text-gray-400 uppercase tracking-widest">Puan</th>
+                            </tr>
+                        </thead>
+                        <tbody className="divide-y divide-gray-50">
+                            <tr className="hover:bg-gray-50 transition-colors">
+                                <td className="p-6 font-black text-2xl text-yellow-500">01</td>
+                                <td className="p-6 font-bold text-secondary">Ahmet Yılmaz</td>
+                                <td className="p-6 text-right font-black text-primary text-xl">450</td>
+                            </tr>
+                            <tr className="hover:bg-gray-50 transition-colors">
+                                <td className="p-6 font-black text-2xl text-gray-400">02</td>
+                                <td className="p-6 font-bold text-secondary">Ayşe Kaya</td>
+                                <td className="p-6 text-right font-black text-secondary text-xl">420</td>
+                            </tr>
+                            <tr className="bg-primary/5">
+                                <td className="p-6 font-black text-2xl text-primary">04</td>
+                                <td className="p-6 font-bold text-secondary">{session?.user.name} (Siz)</td>
+                                <td className="p-6 text-right font-black text-primary text-xl">{todaysSession ? todaysSession.score : '-'}</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
             </div>
         </div>
     )

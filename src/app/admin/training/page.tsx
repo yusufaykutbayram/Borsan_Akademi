@@ -1,5 +1,6 @@
 import { prisma } from "@/lib/prisma"
 import { AddTrainingForm } from "./add-training-form"
+import { deleteTraining } from "./actions"
 
 // Dynamically rendering
 export const dynamic = 'force-dynamic'
@@ -23,7 +24,7 @@ export default async function TrainingPage() {
                             <th style={{ padding: '16px 20px', color: 'var(--text-muted)', fontWeight: 500 }}>Eğitim Adı</th>
                             <th style={{ padding: '16px 20px', color: 'var(--text-muted)', fontWeight: 500 }}>Materyal</th>
                             <th style={{ padding: '16px 20px', color: 'var(--text-muted)', fontWeight: 500 }}>Kayıt Tarihi</th>
-                            <th style={{ padding: '16px 20px', color: 'var(--text-muted)', fontWeight: 500 }}>Bağlı Sınav</th>
+                            <th style={{ padding: '16px 20px', color: 'var(--text-muted)', fontWeight: 500 }}>İşlem</th>
                         </tr>
                     </thead>
                     <tbody>
@@ -43,11 +44,29 @@ export default async function TrainingPage() {
                                 </td>
                                 <td style={{ padding: '16px 20px', color: 'var(--text-muted)' }}>{t.created_at.toLocaleDateString('tr-TR')}</td>
                                 <td style={{ padding: '16px 20px' }}>
-                                    {t.exams.length > 0 ? (
-                                        <span style={{ color: 'var(--success)' }}>Atanmış</span>
-                                    ) : (
-                                        <span style={{ color: 'var(--text-muted)' }}>Yok</span>
-                                    )}
+                                    <form action={async () => {
+                                        'use server'
+                                        await deleteTraining(t.id)
+                                    }}>
+                                        <button 
+                                            type="submit"
+                                            className="btn" 
+                                            style={{ 
+                                                background: 'rgba(239, 68, 68, 0.1)', 
+                                                color: 'var(--danger)', 
+                                                border: '1px solid rgba(239, 68, 68, 0.2)',
+                                                padding: '6px 12px',
+                                                fontSize: '12px',
+                                                cursor: 'pointer'
+                                            }}
+                                            onClick={(e) => {
+                                                // We can't easily use confirm() in a server action form without a separate client component,
+                                                // but for now let's just make it a direct action for simplicity or use a client component.
+                                            }}
+                                        >
+                                            Sil
+                                        </button>
+                                    </form>
                                 </td>
                             </tr>
                         ))}

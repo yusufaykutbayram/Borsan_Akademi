@@ -6,18 +6,16 @@ const prisma = new PrismaClient();
 
 export async function GET() {
   try {
-    const existingAdmin = await prisma.user.findUnique({
-      where: { tc_number: "111111" }
-    });
-
-    if (existingAdmin) {
-      return NextResponse.json({ message: "Sistem zaten kurulu!" });
-    }
-
     const hashedPassword = await hash("123456", 10);
     
-    await prisma.user.create({
-      data: {
+    await prisma.user.upsert({
+      where: { tc_number: "111111" },
+      update: {
+        name: "Admin",
+        password_hash: hashedPassword,
+        role: "ADMIN"
+      },
+      create: {
         name: "Admin",
         tc_number: "111111",
         password_hash: hashedPassword,
@@ -27,7 +25,7 @@ export async function GET() {
       }
     });
 
-    return NextResponse.json({ message: "Admin hesabı basariyla olusturuldu! Giris yapabilirsiniz." });
+    return NextResponse.json({ message: "Admin hesabı güncellendi/oluşturuldu! Kullanıcı adı: Admin, Şifre: 123456" });
   } catch (error) {
     console.error(error);
     return NextResponse.json({ error: "Kurulum hatasi." }, { status: 500 });

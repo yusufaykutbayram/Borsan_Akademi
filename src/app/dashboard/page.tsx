@@ -1,3 +1,4 @@
+import Link from "next/link";
 import { auth } from "@/auth";
 import { prisma } from "@/lib/prisma";
 
@@ -14,65 +15,121 @@ export default async function DashboardPage() {
         take: 3
     })
 
+    const topUsers = await prisma.user.findMany({
+        where: { role: 'EMPLOYEE' },
+        orderBy: { xp_points: 'desc' },
+        take: 5
+    })
+
+
     return (
-        <div className="animate-fade-in">
-            {/* Level Card */}
-            <div className="glass-card" style={{ background: 'linear-gradient(135deg, rgba(37,99,235,0.15), rgba(30,33,43,0.8))', border: '1px solid var(--primary-glow)', marginBottom: '24px', boxShadow: '0 8px 32px rgba(37,99,235,0.15)' }}>
-                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '16px' }}>
-                    <h2 style={{ fontSize: '15px', margin: 0, color: 'var(--text-muted)' }}>Seviye Durumu</h2>
-                    <span style={{ background: 'rgba(37,99,235,0.3)', color: '#60a5fa', padding: '4px 12px', borderRadius: '16px', fontSize: '12px', fontWeight: 'bold', border: '1px solid rgba(59,130,246,0.3)' }}>Gelişim Uzmanı</span>
-                </div>
-                <div style={{ marginBottom: '12px', display: 'flex', justifyContent: 'space-between', alignItems: 'baseline' }}>
-                    <div style={{ display: 'flex', alignItems: 'baseline', gap: '8px' }}>
-                        <span style={{ fontSize: '32px', fontWeight: '900', color: 'var(--text-main)' }}>{user?.xp_points}</span>
-                        <span style={{ color: 'var(--primary)', fontWeight: 'bold', fontSize: '14px' }}>XP</span>
+        <div className="space-y-12 pb-20">
+            {/* Hero Section */}
+            <section className="relative overflow-hidden rounded-3xl bg-secondary px-8 py-16 sm:px-12 sm:py-20 text-white">
+                <div className="relative z-10 max-w-2xl">
+                    <h1 className="text-4xl sm:text-6xl font-bold tracking-tight mb-6 leading-tight">
+                        Learn. Compete.<br />
+                        <span className="text-primary">Improve.</span>
+                    </h1>
+                    <p className="text-gray-400 text-lg mb-8 max-w-lg">
+                        Borsan Akademi ile yeteneklerinizi geliştirin, yarışmalara katılın ve kurumsal gelişim yolculuğunda zirveye tırmanın.
+                    </p>
+                    <div className="flex flex-wrap gap-4">
+                        <Link href="/dashboard/trainings" className="bg-primary hover:bg-primary-dark text-white px-8 py-4 rounded-xl font-semibold transition-all shadow-lg shadow-primary/20">
+                            Eğitimlere Başla
+                        </Link>
+                        <Link href="/dashboard/competition" className="bg-white/10 hover:bg-white/20 backdrop-blur-md text-white px-8 py-4 rounded-xl font-semibold transition-all">
+                            Yarışmaya Katıl
+                        </Link>
                     </div>
-                    <span style={{ color: 'var(--text-muted)', fontSize: '12px' }}>Hedef: 1000 XP</span>
                 </div>
-                <div style={{ width: '100%', height: '8px', background: 'rgba(255,255,255,0.05)', borderRadius: '8px', overflow: 'hidden', boxShadow: 'inset 0 1px 2px rgba(0,0,0,0.5)' }}>
-                    <div style={{ width: `${Math.min((user?.xp_points || 0) / 10, 100)}%`, height: '100%', background: 'linear-gradient(90deg, var(--primary), #60a5fa)', borderRadius: '8px' }}></div>
-                </div>
-            </div>
+                {/* Abstract shapes for "Innovative" feel */}
+                <div className="absolute top-0 right-0 -translate-y-1/2 translate-x-1/2 w-96 h-96 bg-primary/20 rounded-full blur-3xl"></div>
+                <div className="absolute bottom-0 right-0 translate-y-1/2 -translate-x-1/4 w-64 h-64 bg-primary/10 rounded-full blur-2xl"></div>
+            </section>
 
-            {/* Quick Actions */}
-            <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '16px', marginBottom: '32px' }}>
-                <div className="glass-card flex-center" style={{ flexDirection: 'column', padding: '24px 16px', textAlign: 'center', cursor: 'pointer' }}>
-                    <div style={{ width: '56px', height: '56px', background: 'rgba(255,255,255,0.05)', borderRadius: '16px', display: 'flex', alignItems: 'center', justifyContent: 'center', marginBottom: '12px', fontSize: '28px' }}>🎯</div>
-                    <h4 style={{ margin: 0, fontSize: '13px', fontWeight: '600' }}>Görevler</h4>
+            {/* Stats Grid */}
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+                <div className="bg-white p-8 rounded-3xl shadow-soft border border-gray-100 flex flex-col justify-between h-48">
+                    <span className="text-gray-500 text-sm font-medium uppercase tracking-wider">Mevcut Seviye</span>
+                    <div>
+                        <p className="text-3xl font-bold text-secondary">Gelişim Uzmanı</p>
+                        <p className="text-gray-400 text-sm mt-1">Sonraki seviyeye 240 XP kaldı</p>
+                    </div>
                 </div>
-                <div className="glass-card flex-center" style={{ flexDirection: 'column', padding: '24px 16px', textAlign: 'center', border: '1px solid rgba(245, 158, 11, 0.3)', cursor: 'pointer', background: 'linear-gradient(180deg, rgba(245,158,11,0.05), transparent)' }}>
-                    <div style={{ width: '56px', height: '56px', background: 'rgba(245,158,11,0.1)', borderRadius: '16px', display: 'flex', alignItems: 'center', justifyContent: 'center', marginBottom: '12px', fontSize: '28px', color: 'var(--secondary)' }}>⚡</div>
-                    <h4 style={{ margin: 0, fontSize: '13px', fontWeight: '600', color: 'var(--secondary)' }}>Günün Sınavı</h4>
+                <div className="bg-white p-8 rounded-3xl shadow-soft border border-gray-100 flex flex-col justify-between h-48">
+                    <span className="text-gray-500 text-sm font-medium uppercase tracking-wider">Toplam Puan</span>
+                    <div className="flex items-baseline gap-2">
+                        <p className="text-5xl font-bold text-secondary">{user?.xp_points}</p>
+                        <span className="text-primary font-bold">XP</span>
+                    </div>
                 </div>
-            </div>
-
-            {/* Active Trainings */}
-            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '16px' }}>
-                <h3 style={{ fontSize: '18px', margin: 0 }}>Eğitimlerim</h3>
-                <span style={{ fontSize: '12px', color: 'var(--primary)', fontWeight: 'bold', cursor: 'pointer' }}>Tümünü Gör</span>
-            </div>
-            
-            <div style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
-                {trainings.map(t => (
-                    <div key={t.id} className="glass-panel" style={{ padding: '20px', display: 'flex', flexDirection: 'column', gap: '16px' }}>
-                        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start' }}>
-                            <div>
-                                <span style={{ fontSize: '10px', background: 'rgba(255,255,255,0.1)', padding: '4px 8px', borderRadius: '8px', color: 'var(--text-muted)', marginBottom: '8px', display: 'inline-block' }}>{t.training.type === 'VIDEO' ? 'VİDEO' : t.training.type === 'PTX' ? 'SUNUM' : 'DÖKÜMAN'}</span>
-                                <h4 style={{ margin: '0 0 4px 0', fontSize: '15px', lineHeight: '1.4' }}>{t.training.title}</h4>
-                            </div>
-                            <div style={{ width: '48px', height: '48px', borderRadius: '50%', border: '4px solid rgba(255,255,255,0.05)', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '12px', fontWeight: 'bold', borderTopColor: 'var(--primary)' }}>
-                                %{t.progress_percentage}
-                            </div>
+                <div className="bg-white p-8 rounded-3xl shadow-soft border border-gray-100 flex flex-col justify-between h-48">
+                    <span className="text-gray-500 text-sm font-medium uppercase tracking-wider">Eğitim İlerlemesi</span>
+                    <div>
+                        <div className="flex justify-between items-end mb-2">
+                            <p className="text-3xl font-bold text-secondary">%65</p>
+                            <p className="text-gray-400 text-sm">4/6 Tamamlandı</p>
                         </div>
-                        <button className="btn btn-primary" style={{ padding: '10px 16px', fontSize: '13px' }}>Eğitime Devam Et</button>
+                        <div className="w-full h-2 bg-gray-100 rounded-full overflow-hidden">
+                            <div className="h-full bg-primary rounded-full" style={{ width: '65%' }}></div>
+                        </div>
                     </div>
-                ))}
-                {trainings.length === 0 && (
-                    <div className="glass-panel" style={{ textAlign: 'center', padding: '32px' }}>
-                        <span style={{ fontSize: '48px', display: 'block', marginBottom: '16px', opacity: 0.5 }}>🎓</span>
-                        <p style={{ color: 'var(--text-muted)', fontSize: '14px' }}>Şu an için atanan aktif bir eğitim bulunmuyor.</p>
+                </div>
+            </div>
+
+            <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 pt-8">
+                {/* Trainings Section */}
+                <section>
+                    <div className="flex justify-between items-center mb-8">
+                        <h2 className="text-2xl font-bold text-secondary">Aktif Eğitimler</h2>
+                        <Link href="/dashboard/trainings" className="text-primary font-semibold text-sm hover:underline">Tümünü Gör</Link>
                     </div>
-                )}
+                    <div className="space-y-4">
+                        {trainings.map(t => (
+                            <div key={t.id} className="group bg-white p-6 rounded-2xl shadow-soft border border-gray-50 hover:border-primary/20 transition-all cursor-pointer">
+                                <div className="flex justify-between items-start mb-4">
+                                    <div>
+                                        <span className="text-[10px] font-bold text-primary uppercase tracking-widest mb-1 block">
+                                            {t.training.type}
+                                        </span>
+                                        <h3 className="font-bold text-secondary text-lg group-hover:text-primary transition-colors">{t.training.title}</h3>
+                                    </div>
+                                    <div className="w-12 h-12 rounded-full border-2 border-gray-100 flex items-center justify-center text-xs font-bold text-secondary">
+                                        {t.progress_percentage}%
+                                    </div>
+                                </div>
+                                <Link href={`/dashboard/training/${t.training.id}`} className="inline-flex items-center text-sm font-semibold text-secondary group-hover:translate-x-1 transition-transform">
+                                    Devam Et <span className="ml-2">→</span>
+                                </Link>
+                            </div>
+                        ))}
+                    </div>
+                </section>
+
+                {/* Leaderboard Section */}
+                <section>
+                    <div className="flex justify-between items-center mb-8">
+                        <h2 className="text-2xl font-bold text-secondary">Liderlik Tablosu</h2>
+                        <Link href="/dashboard/competition" className="text-primary font-semibold text-sm hover:underline">Sıralamaya Bak</Link>
+                    </div>
+                    <div className="bg-white rounded-3xl shadow-soft border border-gray-100 overflow-hidden">
+                        {topUsers.map((u, index) => (
+                            <div key={u.id} className={`flex items-center p-6 ${index !== topUsers.length - 1 ? 'border-b border-gray-50' : ''} ${u.id === session?.user.id ? 'bg-primary/5' : ''}`}>
+                                <div className={`w-8 h-8 rounded-full flex items-center justify-center text-sm font-bold mr-4 ${index === 0 ? 'bg-yellow-400 text-white' : index === 1 ? 'bg-gray-300 text-white' : index === 2 ? 'bg-orange-400 text-white' : 'text-gray-400'}`}>
+                                    {index + 1}
+                                </div>
+                                <div className="flex-1">
+                                    <p className="font-bold text-secondary">{u.name} {u.id === session?.user.id && '(Sen)'}</p>
+                                </div>
+                                <div className="text-right">
+                                    <span className="text-secondary font-bold">{u.xp_points}</span>
+                                    <span className="text-gray-400 text-[10px] ml-1">XP</span>
+                                </div>
+                            </div>
+                        ))}
+                    </div>
+                </section>
             </div>
         </div>
     )

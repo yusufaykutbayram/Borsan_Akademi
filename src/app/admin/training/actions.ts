@@ -42,3 +42,17 @@ export async function addTraining(formData: FormData) {
     return { error: "Eğitim eklenirken sistem hatası oluştu." }
   }
 }
+
+export async function deleteTraining(id: string) {
+  try {
+    await prisma.training.delete({
+      where: { id }
+    })
+    revalidatePath("/admin/training")
+    return { success: true }
+  } catch (e) {
+    console.error(e)
+    return { error: "Eğitim silinirken bir hata oluştu." }
+  }
+}
+

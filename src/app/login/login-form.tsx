@@ -7,7 +7,12 @@ function LoginButton() {
   const { pending } = useFormStatus()
   
   return (
-    <button type="submit" className="btn btn-primary" aria-disabled={pending} disabled={pending}>
+    <button 
+        type="submit" 
+        className="w-full bg-primary hover:bg-primary-dark text-white py-4 rounded-xl font-bold text-sm transition-all shadow-lg shadow-primary/20 disabled:opacity-50 disabled:cursor-not-allowed" 
+        aria-disabled={pending} 
+        disabled={pending}
+    >
       {pending ? 'Giriş Yapılıyor...' : 'Sisteme Giriş Yap'}
     </button>
   )
@@ -17,11 +22,11 @@ export function LoginForm() {
   const [errorMessage, dispatch] = useFormState(authenticate, undefined)
 
   return (
-    <form action={dispatch}>
-      <div className="form-group">
-        <label className="form-label" htmlFor="name">Ad Soyad</label>
+    <form action={dispatch} className="space-y-6">
+      <div className="space-y-2">
+        <label className="text-[10px] font-bold text-gray-400 uppercase tracking-widest ml-1" htmlFor="name">Ad Soyad</label>
         <input 
-          className="input-field" 
+          className="w-full bg-surface border border-gray-100 rounded-xl px-5 py-4 text-secondary placeholder-gray-300 focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary transition-all font-medium" 
           id="name" 
           name="name" 
           type="text" 
@@ -30,10 +35,10 @@ export function LoginForm() {
         />
       </div>
       
-      <div className="form-group">
-        <label className="form-label" htmlFor="password">Şifre (TC Kimlik No İlk 6 Hane)</label>
+      <div className="space-y-2">
+        <label className="text-[10px] font-bold text-gray-400 uppercase tracking-widest ml-1" htmlFor="password">Şifre (TC Kimlik No İlk 6 Hane)</label>
         <input 
-          className="input-field" 
+          className="w-full bg-surface border border-gray-100 rounded-xl px-5 py-4 text-secondary placeholder-gray-300 focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary transition-all font-mono" 
           id="password" 
           name="password" 
           type="password" 
@@ -43,12 +48,12 @@ export function LoginForm() {
         />
       </div>
 
-      <div style={{ margin: '32px 0 16px 0' }}>
+      <div className="pt-4">
         <LoginButton />
       </div>
 
       {errorMessage && (
-        <div style={{ color: 'var(--danger)', fontSize: '14px', textAlign: 'center', padding: '8px', background: 'rgba(239, 68, 68, 0.1)', borderRadius: '8px' }}>
+        <div className="bg-red-50 text-red-600 text-xs font-bold p-4 rounded-xl border border-red-100 text-center animate-shake">
           <p>{errorMessage}</p>
         </div>
       )}

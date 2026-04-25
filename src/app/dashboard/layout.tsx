@@ -1,59 +1,92 @@
 import { auth, signOut } from "@/auth";
 import { redirect } from "next/navigation";
 import Link from "next/link";
+import Image from "next/image";
 
 export default async function DashboardLayout({ children }: { children: React.ReactNode }) {
     const session = await auth();
-    if (!session || session.user.role === 'ADMIN') redirect("/login");
+    if (!session) redirect("/login");
 
     return (
-        <div style={{ paddingBottom: '90px', minHeight: '100vh', position: 'relative' }}>
-            <header className="glass-panel" style={{ borderRadius: '0 0 24px 24px', padding: '16px 24px', position: 'sticky', top: 0, zIndex: 10, display: 'flex', justifyContent: 'space-between', alignItems: 'center', borderTop: 'none', borderLeft: 'none', borderRight: 'none' }}>
-                <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
-                    <div style={{ width: '40px', height: '40px', background: 'linear-gradient(135deg, var(--primary), var(--secondary))', borderRadius: '50%', border: '2px solid rgba(255,255,255,0.2)', display: 'flex', alignItems: 'center', justifyContent: 'center', fontWeight: 'bold' }}>
-                        {session.user.name?.charAt(0)}
+        <div className="min-h-screen bg-surface flex flex-col font-sans">
+            {/* Top Navigation */}
+            <header className="sticky top-0 z-50 w-full bg-white/80 backdrop-blur-md border-b border-gray-100 shadow-sm">
+                <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+                    <div className="flex justify-between items-center h-20">
+                        {/* Logo */}
+                        <div className="flex-shrink-0 flex items-center">
+                            <Link href="/" className="transition-opacity hover:opacity-80">
+                                <Image 
+                                    src="/images/logo.png" 
+                                    alt="Borsan Logo" 
+                                    width={140} 
+                                    height={35} 
+                                    className="object-contain"
+                                    priority
+                                />
+                            </Link>
+                        </div>
+
+                        {/* Desktop Menu */}
+                        <nav className="hidden md:flex space-x-8">
+                            <Link href="/dashboard" className="text-gray-900 hover:text-primary px-3 py-2 text-sm font-medium transition-colors border-b-2 border-primary">
+                                Home
+                            </Link>
+                            <Link href="/dashboard/trainings" className="text-gray-500 hover:text-primary px-3 py-2 text-sm font-medium transition-colors">
+                                Trainings
+                            </Link>
+                            <Link href="/dashboard/competition" className="text-gray-500 hover:text-primary px-3 py-2 text-sm font-medium transition-colors">
+                                Leaderboard
+                            </Link>
+                            <Link href="/dashboard/profile" className="text-gray-500 hover:text-primary px-3 py-2 text-sm font-medium transition-colors">
+                                Profile
+                            </Link>
+                        </nav>
+
+                        {/* Right Actions */}
+                        <div className="flex items-center space-x-4">
+                            <button className="p-2 rounded-full text-gray-400 hover:text-primary hover:bg-gray-100 transition-all">
+                                <span className="sr-only">Notifications</span>
+                                <span className="text-xl">🔔</span>
+                            </button>
+                            
+                            <div className="flex items-center space-x-3 border-l pl-4 ml-2 border-gray-100">
+                                <div className="w-9 h-9 bg-primary/10 text-primary rounded-full flex items-center justify-center font-bold text-sm">
+                                    {session.user.name?.charAt(0)}
+                                </div>
+                                <div className="hidden sm:block">
+                                    <p className="text-xs font-semibold text-gray-900">{session.user.name}</p>
+                                </div>
+                                <form action={async () => {
+                                    "use server";
+                                    await signOut({ redirectTo: '/login' });
+                                }}>
+                                    <button className="text-xs text-gray-400 hover:text-red-600 transition-colors">Exit</button>
+                                </form>
+                            </div>
+                        </div>
                     </div>
-                    <div>
-                        <p style={{ margin: 0, fontSize: '11px', color: 'var(--text-muted)', textTransform: 'uppercase', letterSpacing: '1px' }}>Hoş Geldin,</p>
-                        <p style={{ margin: 0, fontWeight: 600, fontSize: '15px' }}>{session.user.name}</p>
-                    </div>
-                </div>
-                <div>
-                     <form action={async () => {
-                        "use server";
-                        await signOut({ redirectTo: '/login' });
-                    }}>
-                        <button style={{ background: 'rgba(255,255,255,0.1)', border: '1px solid var(--glass-border)', borderRadius: '12px', padding: '8px 12px', color: 'var(--text-main)', cursor: 'pointer', fontSize: '12px', backdropFilter: 'blur(4px)' }}>Çıkış</button>
-                    </form>
                 </div>
             </header>
-            
-            <main style={{ padding: '24px', maxWidth: '600px', margin: '0 auto' }}>
+
+            {/* Main Content */}
+            <main className="flex-1 max-w-7xl mx-auto w-full px-4 sm:px-6 lg:px-8 py-8 animate-fade-in">
                 {children}
             </main>
 
-            <nav className="glass-panel" style={{ position: 'fixed', bottom: 0, width: '100%', borderRadius: '32px 32px 0 0', padding: '16px 24px', display: 'flex', justifyContent: 'space-around', zIndex: 10, borderBottom: 'none', background: 'rgba(15, 17, 26, 0.85)' }}>
-                <Link href="/dashboard" className="nav-item">
-                    <span style={{ fontSize: '22px' }}>🏠</span>
-                    <span style={{ fontSize: '10px', marginTop: '6px' }}>Ana Sayfa</span>
+            {/* Mobile Navigation (Bottom) */}
+            <nav className="md:hidden fixed bottom-0 left-0 right-0 bg-white border-t border-gray-100 px-6 py-4 flex justify-around items-center z-50">
+                <Link href="/dashboard" className="text-primary flex flex-col items-center">
+                    <span className="text-xl">🏠</span>
                 </Link>
-                <Link href="/dashboard/trainings" className="nav-item">
-                    <span style={{ fontSize: '22px' }}>📚</span>
-                    <span style={{ fontSize: '10px', marginTop: '6px' }}>Eğitimler</span>
+                <Link href="/dashboard/trainings" className="text-gray-400 flex flex-col items-center">
+                    <span className="text-xl">📚</span>
                 </Link>
-                <Link href="/dashboard/competition" className="nav-item" style={{ position: 'relative' }}>
-                    <div style={{ position: 'absolute', top: '-40px', background: 'linear-gradient(135deg, var(--secondary), #ff8f00)', width: '56px', height: '56px', borderRadius: '50%', display: 'flex', alignItems: 'center', justifyContent: 'center', boxShadow: '0 4px 20px rgba(245, 158, 11, 0.4)', border: '4px solid var(--bg-dark)' }}>
-                        <span style={{ fontSize: '26px' }}>🏆</span>
-                    </div>
-                    <span style={{ fontSize: '10px', marginTop: '28px', color: 'var(--secondary)', fontWeight: 'bold' }}>Yarışma</span>
+                <Link href="/dashboard/competition" className="text-gray-400 flex flex-col items-center">
+                    <span className="text-xl">🏆</span>
                 </Link>
-                <Link href="/dashboard/ai-chat" className="nav-item">
-                    <span style={{ fontSize: '22px' }}>🤖</span>
-                    <span style={{ fontSize: '10px', marginTop: '6px' }}>Asistan</span>
-                </Link>
-                <Link href="/dashboard/profile" className="nav-item">
-                    <span style={{ fontSize: '22px' }}>👤</span>
-                    <span style={{ fontSize: '10px', marginTop: '6px' }}>Profil</span>
+                <Link href="/dashboard/profile" className="text-gray-400 flex flex-col items-center">
+                    <span className="text-xl">👤</span>
                 </Link>
             </nav>
         </div>

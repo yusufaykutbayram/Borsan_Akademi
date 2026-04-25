@@ -57,58 +57,79 @@ export function QuizClient({ questions }: { questions: { id: string, text: strin
     }
 
     if (questions.length === 0) {
-        return <div className="glass-panel" style={{textAlign:'center', padding: '32px'}}>Henüz sistemde soru bulunmuyor.</div>
+        return (
+            <div className="bg-white rounded-3xl p-12 text-center shadow-soft border border-gray-100">
+                <p className="text-gray-500 font-medium">Henüz sistemde soru bulunmuyor.</p>
+            </div>
+        )
     }
 
     if (isFinished) {
         return (
-            <div className="glass-card" style={{textAlign:'center', padding: '40px'}}>
-                <span style={{ fontSize: '48px', display: 'block', marginBottom:'16px' }}>🎉</span>
-                <h2>Sınav Tamamlandı!</h2>
-                <p>Oyunlaştırılmış puanlarınız hesaplanıyor...</p>
+            <div className="bg-white rounded-3xl p-12 text-center shadow-soft border border-gray-100 animate-fade-in">
+                <span className="text-6xl block mb-6">🎉</span>
+                <h2 className="text-3xl font-bold text-secondary mb-4">Sınav Tamamlandı!</h2>
+                <p className="text-gray-500">Oyunlaştırılmış puanlarınız hesaplanıyor...</p>
             </div>
         )
     }
 
     const q = questions[currentIndex]
+    const progress = ((currentIndex + 1) / questions.length) * 100
 
     return (
-        <div className="animate-fade-in" style={{ paddingBottom: '40px' }}>
-            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '24px' }}>
-                <span style={{ background: 'rgba(255,255,255,0.1)', padding: '6px 12px', borderRadius: '16px', fontSize: '14px', fontWeight: 'bold' }}>
-                    Soru {currentIndex + 1} / {questions.length}
-                </span>
-                <span style={{ 
-                    background: timeLeft <= 5 ? 'var(--danger)' : 'rgba(245, 158, 11, 0.2)', 
-                    color: timeLeft <= 5 ? 'white' : 'var(--secondary)',
-                    padding: '8px 16px', 
-                    borderRadius: '50px', 
-                    fontSize: '18px', 
-                    fontWeight: 900,
-                    transition: 'all 0.3s'
-                }}>
-                    ⌚ {timeLeft}s
-                </span>
+        <div className="max-w-3xl mx-auto space-y-8 animate-fade-in pb-20">
+            {/* Header Info */}
+            <div className="flex justify-between items-center bg-white p-6 rounded-2xl shadow-soft border border-gray-50">
+                <div className="space-y-1">
+                    <p className="text-[10px] font-bold text-gray-400 uppercase tracking-widest">Soru</p>
+                    <p className="text-xl font-bold text-secondary">{currentIndex + 1} <span className="text-gray-300">/</span> {questions.length}</p>
+                </div>
+                
+                <div className={`flex flex-col items-end transition-all ${timeLeft <= 5 ? 'scale-110' : ''}`}>
+                    <p className="text-[10px] font-bold text-gray-400 uppercase tracking-widest mb-1">Kalan Süre</p>
+                    <div className={`px-6 py-2 rounded-full font-black text-2xl ${timeLeft <= 5 ? 'bg-primary text-white shadow-lg shadow-primary/20' : 'bg-surface text-secondary'}`}>
+                        {timeLeft}s
+                    </div>
+                </div>
             </div>
 
-            <div className="glass-panel" style={{ marginBottom: '24px', minHeight: '150px', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-                <h2 style={{ fontSize: '20px', lineHeight: '1.6', textAlign: 'center', margin: 0 }}>{q.text}</h2>
+            {/* Global Progress Bar */}
+            <div className="w-full h-1 bg-gray-100 rounded-full overflow-hidden">
+                <div 
+                    className="h-full bg-primary transition-all duration-500" 
+                    style={{ width: `${progress}%` }}
+                ></div>
             </div>
 
-            <div style={{ display: 'flex', flexDirection: 'column', gap: '12px' }}>
-                {q.answers.map((ans: { id: string, text: string, is_correct: boolean }) => (
-                    <button 
-                        key={ans.id} 
-                        onClick={() => handleAnswer(ans.is_correct)}
-                        className="glass-card" 
-                        style={{ width: '100%', textAlign: 'left', cursor: 'pointer', padding: '20px', fontSize: '16px', transition: 'transform 0.1s', border: '1px solid var(--glass-border)' }}
-                        onMouseEnter={(e) => e.currentTarget.style.transform = 'scale(1.02)'}
-                        onMouseLeave={(e) => e.currentTarget.style.transform = 'scale(1)'}
-                    >
-                        {ans.text}
-                    </button>
-                ))}
+            {/* Question Card */}
+            <div className="bg-white rounded-[2rem] p-10 sm:p-16 shadow-premium border border-gray-50 text-center space-y-8">
+                <h2 className="text-2xl sm:text-3xl font-bold text-secondary leading-tight">
+                    {q.text}
+                </h2>
+                
+                <div className="grid grid-cols-1 gap-4 pt-4">
+                    {q.answers.map((ans) => (
+                        <button 
+                            key={ans.id} 
+                            onClick={() => handleAnswer(ans.is_correct)}
+                            className="group relative w-full text-left p-6 rounded-2xl border-2 border-gray-50 hover:border-primary/20 hover:bg-primary/[0.02] transition-all flex items-center gap-4"
+                        >
+                            <div className="w-10 h-10 rounded-xl bg-surface group-hover:bg-primary/10 flex items-center justify-center font-bold text-gray-400 group-hover:text-primary transition-colors">
+                                {String.fromCharCode(65 + q.answers.indexOf(ans))}
+                            </div>
+                            <span className="text-lg font-medium text-gray-600 group-hover:text-secondary transition-colors">
+                                {ans.text}
+                            </span>
+                        </button>
+                    ))}
+                </div>
             </div>
+
+            {/* Footer Tip */}
+            <p className="text-center text-gray-400 text-xs">
+                Doğru cevabı ne kadar hızlı verirseniz o kadar çok **Ek XP** kazanırsınız.
+            </p>
         </div>
     )
 }
