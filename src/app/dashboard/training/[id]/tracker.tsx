@@ -2,6 +2,7 @@
 
 import { useState, useEffect, useRef } from 'react'
 import { updateProgress } from './actions'
+import RevealViewer from '@/components/RevealViewer'
 
 interface TrackerProps {
     trainingId: string
@@ -14,9 +15,17 @@ interface TrackerProps {
 export default function TrainingTracker({ trainingId, userId, type, initialProgress, fileUrl }: TrackerProps) {
     const [progress, setProgress] = useState(initialProgress)
     const [isCompleted, setIsCompleted] = useState(initialProgress >= 100)
-    const [timeLeft, setTimeLeft] = useState(type === 'PTX' ? 45 : 0) // 45 seconds for presentations
+    const [timeLeft, setTimeLeft] = useState(type === 'PTX' || type === 'REVEAL' ? 45 : 0)
     const videoRef = useRef<HTMLVideoElement>(null)
     const lastUpdateRef = useRef<number>(initialProgress)
+
+    // Sample slides for Reveal.js demonstration
+    const sampleSlides = [
+        { content: '<h1 style="color: #E30613; font-weight: 900;">Borsan Akademi</h1><p style="color: #666;">Modern Eğitim Deneyimine Hoş Geldiniz</p>' },
+        { content: '<h3 style="color: #333; font-weight: 800;">Neden Reveal.js?</h3><ul style="color: #555; text-align: left; display: inline-block;"><li>Hızlı ve Akıcı</li><li>Etkileşimli İçerik</li><li>Mobil Uyumlu</li></ul>' },
+        { content: '<h2 style="color: #E30613; font-weight: 800;">Eğitim Hedefleri</h2><p style="color: #666;">Bu bölümde kurumsal gelişim süreçlerini inceleyeceğiz.</p>' },
+        { content: '<h3 style="color: #333; font-weight: 800;">Hazırsanız Başlayalım!</h3><p style="color: #999;">Ok tuşlarını kullanarak ilerleyebilirsiniz.</p>' }
+    ]
 
     // Handle Video Progress
     const handleVideoTimeUpdate = () => {
@@ -31,7 +40,6 @@ export default function TrainingTracker({ trainingId, userId, type, initialProgr
             setProgress(currentPercentage)
             lastUpdateRef.current = currentPercentage
             
-            // Auto-save every 5%
             if (currentPercentage % 5 === 0) {
                 updateProgress(trainingId, userId, currentPercentage)
             }
@@ -44,9 +52,9 @@ export default function TrainingTracker({ trainingId, userId, type, initialProgr
         updateProgress(trainingId, userId, 100)
     }
 
-    // Handle Presentation Timer
+    // Handle Presentation/Reveal Timer
     useEffect(() => {
-        if (type === 'PTX' && !isCompleted) {
+        if ((type === 'PTX' || type === 'REVEAL') && !isCompleted) {
             const timer = setInterval(() => {
                 setTimeLeft(prev => {
                     if (prev <= 1) {
@@ -64,15 +72,16 @@ export default function TrainingTracker({ trainingId, userId, type, initialProgr
         setProgress(100)
         setIsCompleted(true)
         await updateProgress(trainingId, userId, 100)
-        window.location.reload() // Refresh to show XP and status
+        window.location.reload()
     }
 
     const isVideo = type === 'VIDEO'
     const isPTX = type === 'PTX'
-    const isYoutube = isVideo && (fileUrl.includes('youtube.com') || fileUrl.includes('youtu.be'))
+    const isReveal = type === 'REVEAL'
+    const isYoutube = isVideo && (fileUrl?.includes('youtube.com') || fileUrl?.includes('youtu.be'))
 
-    let embedUrl = fileUrl
-    if (isYoutube) {
+    let embedUrl = fileUrl || ''
+    if (isYoutube && fileUrl) {
         const videoId = fileUrl.includes('youtu.be')
             ? fileUrl.split('youtu.be/')[1]?.split('?')[0]
             : new URLSearchParams(fileUrl.split('?')[1]).get('v')
@@ -82,8 +91,12 @@ export default function TrainingTracker({ trainingId, userId, type, initialProgr
     return (
         <div style={{ marginTop: '24px' }}>
             {/* Media Display */}
-            <div className="glass-panel" style={{ padding: '0', overflow: 'hidden', minHeight: '400px', display: 'flex', alignItems: 'center', justifyContent: 'center', position: 'relative' }}>
-                {isYoutube ? (
+            <div className="bg-white rounded-[2rem] overflow-hidden shadow-premium border border-gray-100 flex flex-col items-center justify-center relative min-h-[500px]">
+                {isReveal ? (
+                    <div className="w-full h-[600px]">
+                        <RevealViewer slides={sampleSlides} />
+                    </div>
+                ) : isYoutube ? (
                     <iframe 
                         src={embedUrl}
                         style={{ width: '100%', height: '60vh', border: 'none' }}
@@ -99,18 +112,18 @@ export default function TrainingTracker({ trainingId, userId, type, initialProgr
                         controlsList="nodownload"
                         style={{ width: '100%', maxHeight: '80vh', display: 'block' }}
                     >
-                        <source src={fileUrl} type="video/mp4" />
+                        <source src={fileUrl || ''} type="video/mp4" />
                         Tarayıcınız video oynatmayı desteklemiyor.
                     </video>
                 ) : isPTX ? (
                     <iframe 
-                        src={`https://view.officeapps.live.com/op/view.aspx?src=${encodeURIComponent(fileUrl)}`}
+                        src={`https://view.officeapps.live.com/op/view.aspx?src=${encodeURIComponent(fileUrl || '')}`}
                         style={{ width: '100%', height: '75vh', border: 'none' }}
                         title="Sunum Görüntüleyici"
                     />
                 ) : (
                     <iframe 
-                        src={`https://docs.google.com/viewer?url=${encodeURIComponent(fileUrl)}&embedded=true`}
+                        src={`https://docs.google.com/viewer?url=${encodeURIComponent(fileUrl || '')}&embedded=true`}
                         style={{ width: '100%', height: '75vh', border: 'none' }}
                         title="Döküman Görüntüleyici"
                     />
@@ -118,26 +131,25 @@ export default function TrainingTracker({ trainingId, userId, type, initialProgr
             </div>
 
             {/* Progress Bar & Controls */}
-            <div className="glass-card" style={{ marginTop: '24px', border: '1px solid var(--glass-border)' }}>
-                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '12px' }}>
-                    <span style={{ fontSize: '14px', fontWeight: 'bold' }}>Eğitim İlerlemesi</span>
-                    <span style={{ fontSize: '14px', color: 'var(--primary)', fontWeight: 'bold' }}>%{progress}</span>
+            <div className="bg-white p-8 rounded-3xl shadow-soft border border-gray-100 mt-8">
+                <div className="flex justify-between items-center mb-4">
+                    <span className="text-sm font-bold text-gray-400 uppercase tracking-widest">Eğitim İlerlemesi</span>
+                    <span className="text-xl font-black text-secondary">%{progress}</span>
                 </div>
-                <div style={{ width: '100%', height: '10px', background: 'rgba(255,255,255,0.05)', borderRadius: '10px', overflow: 'hidden', marginBottom: '20px' }}>
-                    <div style={{ width: `${progress}%`, height: '100%', background: 'linear-gradient(90deg, var(--primary), #60a5fa)', transition: 'width 0.3s ease' }}></div>
+                <div className="w-full h-3 bg-gray-50 rounded-full overflow-hidden mb-8">
+                    <div className="h-full bg-primary rounded-full transition-all duration-1000" style={{ width: `${progress}%` }}></div>
                 </div>
 
-                {(isPTX || isYoutube) && !isCompleted && (
-                    <div style={{ textAlign: 'center' }}>
+                {(isPTX || isYoutube || isReveal) && !isCompleted && (
+                    <div className="text-center">
                         {timeLeft > 0 ? (
-                            <p style={{ color: 'var(--text-muted)', fontSize: '13px' }}>
-                                Lütfen {isPTX ? 'sunumu' : 'videoyu'} inceleyin. Bitir butonu {timeLeft} saniye sonra aktif olacaktır.
+                            <p className="text-gray-400 text-sm font-medium">
+                                Lütfen içeriği inceleyin. Bitir butonu <span className="text-primary font-bold">{timeLeft}</span> saniye sonra aktif olacaktır.
                             </p>
                         ) : (
                             <button 
                                 onClick={handleCompleteManual}
-                                className="btn btn-primary"
-                                style={{ width: '100%', padding: '14px' }}
+                                className="w-full bg-primary hover:bg-primary-dark text-white py-4 rounded-xl font-bold text-sm transition-all shadow-lg shadow-primary/20"
                             >
                                 Eğitimi Tamamladım
                             </button>
@@ -146,14 +158,14 @@ export default function TrainingTracker({ trainingId, userId, type, initialProgr
                 )}
 
                 {isVideo && !isYoutube && !isCompleted && (
-                    <p style={{ color: 'var(--text-muted)', fontSize: '13px', textAlign: 'center' }}>
+                    <p className="text-gray-400 text-sm font-medium text-center">
                         Eğitimin tamamlanması için videoyu sonuna kadar izlemelisiniz.
                     </p>
                 )}
 
                 {isCompleted && (
-                    <div style={{ textAlign: 'center', color: '#22c55e', fontWeight: 'bold', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '8px' }}>
-                        <span>✅ Bu eğitimi başarıyla tamamladınız!</span>
+                    <div className="text-center text-emerald-500 font-bold flex items-center justify-center gap-2">
+                        <span className="text-xl">✓</span> Bu eğitimi başarıyla tamamladınız!
                     </div>
                 )}
             </div>

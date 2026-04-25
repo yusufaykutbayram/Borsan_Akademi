@@ -17,6 +17,7 @@ export default async function TrainingsPage() {
         VIDEO: '🎬 Video',
         PDF: '📄 Döküman',
         PTX: '📊 Sunum',
+        REVEAL: '✨ İnteraktif Slayt',
         FILE: '📁 Dosya'
     }
 
