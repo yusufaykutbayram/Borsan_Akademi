@@ -9,7 +9,7 @@ function LoginButton() {
   return (
     <button 
         type="submit" 
-        className="w-full bg-primary hover:bg-primary-dark text-white py-4 rounded-xl font-bold text-sm transition-all shadow-lg shadow-primary/20 disabled:opacity-50 disabled:cursor-not-allowed" 
+        className="w-full bg-red-600 hover:bg-red-700 text-white py-4 rounded-xl font-bold text-sm transition-all shadow-lg shadow-red-500/20 disabled:opacity-50 disabled:cursor-not-allowed" 
         aria-disabled={pending} 
         disabled={pending}
     >
@@ -24,9 +24,9 @@ export function LoginForm() {
   return (
     <form action={dispatch} className="space-y-6">
       <div className="space-y-2">
-        <label className="text-[10px] font-bold text-gray-400 uppercase tracking-widest ml-1" htmlFor="name">Ad Soyad</label>
+        <label className="text-xs font-bold text-gray-400 uppercase tracking-widest ml-1" htmlFor="name">Ad Soyad</label>
         <input 
-          className="w-full bg-surface border border-gray-100 rounded-xl px-5 py-4 text-secondary placeholder-gray-300 focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary transition-all font-medium" 
+          className="w-full bg-gray-50 border border-gray-100 rounded-xl px-5 py-4 text-gray-900 placeholder-gray-300 focus:outline-none focus:ring-2 focus:ring-red-500/20 focus:border-red-500 transition-all font-medium" 
           id="name" 
           name="name" 
           type="text" 
@@ -36,9 +36,9 @@ export function LoginForm() {
       </div>
       
       <div className="space-y-2">
-        <label className="text-[10px] font-bold text-gray-400 uppercase tracking-widest ml-1" htmlFor="password">Şifre (TC Kimlik No İlk 6 Hane)</label>
+        <label className="text-xs font-bold text-gray-400 uppercase tracking-widest ml-1" htmlFor="password">Şifre (TC Kimlik No İlk 6 Hane)</label>
         <input 
-          className="w-full bg-surface border border-gray-100 rounded-xl px-5 py-4 text-secondary placeholder-gray-300 focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary transition-all font-mono" 
+          className="w-full bg-gray-50 border border-gray-100 rounded-xl px-5 py-4 text-gray-900 placeholder-gray-300 focus:outline-none focus:ring-2 focus:ring-red-500/20 focus:border-red-500 transition-all font-mono" 
           id="password" 
           name="password" 
           type="password" 
@@ -53,7 +53,7 @@ export function LoginForm() {
       </div>
 
       {errorMessage && (
-        <div className="bg-red-50 text-red-600 text-xs font-bold p-4 rounded-xl border border-red-100 text-center animate-shake">
+        <div className="bg-red-50 text-red-600 text-xs font-bold p-4 rounded-xl border border-red-100 text-center">
           <p>{errorMessage}</p>
         </div>
       )}

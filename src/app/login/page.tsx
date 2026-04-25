@@ -16,10 +16,10 @@ export default async function LoginPage() {
   }
 
   return (
-    <main className="min-h-screen bg-surface flex items-center justify-center p-4 animate-fade-in font-sans">
+    <main className="min-h-screen bg-gray-50 flex items-center justify-center p-4 font-sans">
       <div className="max-w-md w-full space-y-8">
         <div className="text-center">
-            <Link href="/" className="inline-block transition-transform hover:scale-105">
+            <Link href="/" className="inline-block">
                 <Image 
                     src="/images/logo.png" 
                     alt="Borsan Logo" 
@@ -29,11 +29,11 @@ export default async function LoginPage() {
                     priority
                 />
             </Link>
-            <h2 className="mt-6 text-3xl font-black text-secondary tracking-tight">Akademi Girişi</h2>
+            <h2 className="mt-6 text-3xl font-black text-gray-900 tracking-tight">Akademi Girişi</h2>
             <p className="mt-2 text-sm text-gray-500 font-medium">Kurumsal gelişim ve eğitim platformu</p>
         </div>
 
-        <div className="bg-white p-10 rounded-[2.5rem] shadow-premium border border-gray-100">
+        <div className="bg-white p-10 rounded-3xl shadow-xl border border-gray-100">
           <LoginForm />
         </div>
         
@@ -41,5 +41,6 @@ export default async function LoginPage() {
             © 2026 Borsan Kablo. Tüm hakları saklıdır.
         </p>
       </div>
-    );
+    </main>
+  );
 }
