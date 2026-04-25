@@ -28,8 +28,8 @@ export default async function DashboardPage() {
             <section className="relative overflow-hidden rounded-3xl bg-secondary px-8 py-16 sm:px-12 sm:py-20 text-white">
                 <div className="relative z-10 max-w-2xl">
                     <h1 className="text-4xl sm:text-6xl font-bold tracking-tight mb-6 leading-tight">
-                        Learn. Compete.<br />
-                        <span className="text-primary">Improve.</span>
+                        Öğren. Yarış.<br />
+                        <span className="text-primary">Geliş.</span>
                     </h1>
                     <p className="text-gray-400 text-lg mb-8 max-w-lg">
                         Borsan Akademi ile yeteneklerinizi geliştirin, yarışmalara katılın ve kurumsal gelişim yolculuğunda zirveye tırmanın.

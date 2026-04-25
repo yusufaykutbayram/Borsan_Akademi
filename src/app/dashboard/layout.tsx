@@ -30,23 +30,23 @@ export default async function DashboardLayout({ children }: { children: React.Re
                         {/* Desktop Menu */}
                         <nav className="hidden md:flex space-x-8">
                             <Link href="/dashboard" className="text-gray-900 hover:text-primary px-3 py-2 text-sm font-medium transition-colors border-b-2 border-primary">
-                                Home
+                                Ana Sayfa
                             </Link>
                             <Link href="/dashboard/trainings" className="text-gray-500 hover:text-primary px-3 py-2 text-sm font-medium transition-colors">
-                                Trainings
+                                Eğitimler
                             </Link>
                             <Link href="/dashboard/competition" className="text-gray-500 hover:text-primary px-3 py-2 text-sm font-medium transition-colors">
-                                Leaderboard
+                                Sıralama
                             </Link>
                             <Link href="/dashboard/profile" className="text-gray-500 hover:text-primary px-3 py-2 text-sm font-medium transition-colors">
-                                Profile
+                                Profilim
                             </Link>
                         </nav>
 
                         {/* Right Actions */}
                         <div className="flex items-center space-x-4">
                             <button className="p-2 rounded-full text-gray-400 hover:text-primary hover:bg-gray-100 transition-all">
-                                <span className="sr-only">Notifications</span>
+                                <span className="sr-only">Bildirimler</span>
                                 <span className="text-xl">🔔</span>
                             </button>
                             
@@ -61,7 +61,7 @@ export default async function DashboardLayout({ children }: { children: React.Re
                                     "use server";
                                     await signOut({ redirectTo: '/login' });
                                 }}>
-                                    <button className="text-xs text-gray-400 hover:text-red-600 transition-colors">Exit</button>
+                                    <button className="text-xs text-gray-400 hover:text-red-600 transition-colors">Çıkış Yap</button>
                                 </form>
                             </div>
                         </div>
@@ -78,15 +78,19 @@ export default async function DashboardLayout({ children }: { children: React.Re
             <nav className="md:hidden fixed bottom-0 left-0 right-0 bg-white border-t border-gray-100 px-6 py-4 flex justify-around items-center z-50">
                 <Link href="/dashboard" className="text-primary flex flex-col items-center">
                     <span className="text-xl">🏠</span>
+                    <span className="text-[10px] font-bold mt-1">Ana Sayfa</span>
                 </Link>
                 <Link href="/dashboard/trainings" className="text-gray-400 flex flex-col items-center">
                     <span className="text-xl">📚</span>
+                    <span className="text-[10px] font-bold mt-1">Eğitimler</span>
                 </Link>
                 <Link href="/dashboard/competition" className="text-gray-400 flex flex-col items-center">
                     <span className="text-xl">🏆</span>
+                    <span className="text-[10px] font-bold mt-1">Yarışma</span>
                 </Link>
                 <Link href="/dashboard/profile" className="text-gray-400 flex flex-col items-center">
                     <span className="text-xl">👤</span>
+                    <span className="text-[10px] font-bold mt-1">Profil</span>
                 </Link>
             </nav>
         </div>
