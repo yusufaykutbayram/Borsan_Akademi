@@ -2,7 +2,12 @@
 
 import { useState, useEffect, useRef } from 'react'
 import { updateProgress } from './actions'
-import RevealViewer from '@/components/RevealViewer'
+import dynamic from 'next/dynamic'
+
+const RevealViewer = dynamic(() => import('@/components/RevealViewer'), { 
+    ssr: false,
+    loading: () => <div className="w-full h-[600px] bg-gray-50 animate-pulse flex items-center justify-center rounded-3xl text-gray-400">Yükleniyor...</div>
+})
 
 interface TrackerProps {
     trainingId: string
