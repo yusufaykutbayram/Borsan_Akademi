@@ -68,7 +68,7 @@ export default async function CompetitionDashboard() {
 
             {/* Ranking Section */}
             <div className="space-y-6">
-                <h3 className="text-2xl font-bold text-secondary px-2">Günlük Sıralama</h3>
+                <h3 className="text-2xl font-bold text-secondary px-2">Günlük Yarışma Sıralaması</h3>
                 <div className="bg-white rounded-3xl shadow-soft border border-gray-100 overflow-hidden">
                     <table className="w-full text-left border-collapse">
                         <thead>

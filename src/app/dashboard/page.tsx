@@ -111,7 +111,7 @@ export default async function DashboardPage() {
                 <section>
                     <div className="flex justify-between items-center mb-8">
                         <h2 className="text-2xl font-bold text-secondary">Liderlik Tablosu</h2>
-                        <Link href="/dashboard/competition" className="text-primary font-semibold text-sm hover:underline">Sıralamaya Bak</Link>
+                        <Link href="/dashboard/competition" className="text-primary font-semibold text-sm hover:underline">Yarışmaya Katıl</Link>
                     </div>
                     <div className="bg-white rounded-3xl shadow-soft border border-gray-100 overflow-hidden">
                         {topUsers.map((u, index) => (

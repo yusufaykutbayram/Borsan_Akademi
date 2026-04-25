@@ -2,6 +2,7 @@ import { auth, signOut } from "@/auth";
 import { redirect } from "next/navigation";
 import Link from "next/link";
 import Image from "next/image";
+import { NavLinks } from "./nav-links";
 
 export default async function DashboardLayout({ children }: { children: React.ReactNode }) {
     const session = await auth();
@@ -28,20 +29,7 @@ export default async function DashboardLayout({ children }: { children: React.Re
                         </div>
 
                         {/* Desktop Menu */}
-                        <nav className="hidden md:flex space-x-8">
-                            <Link href="/dashboard" className="text-gray-900 hover:text-primary px-3 py-2 text-sm font-medium transition-colors border-b-2 border-primary">
-                                Ana Sayfa
-                            </Link>
-                            <Link href="/dashboard/trainings" className="text-gray-500 hover:text-primary px-3 py-2 text-sm font-medium transition-colors">
-                                Eğitimler
-                            </Link>
-                            <Link href="/dashboard/competition" className="text-gray-500 hover:text-primary px-3 py-2 text-sm font-medium transition-colors">
-                                Sıralama
-                            </Link>
-                            <Link href="/dashboard/profile" className="text-gray-500 hover:text-primary px-3 py-2 text-sm font-medium transition-colors">
-                                Profilim
-                            </Link>
-                        </nav>
+                        <NavLinks />
 
                         {/* Right Actions */}
                         <div className="flex items-center space-x-4">

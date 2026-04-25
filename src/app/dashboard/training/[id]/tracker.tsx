@@ -17,7 +17,6 @@ export default function TrainingTracker({ trainingId, userId, type, initialProgr
     const [timeLeft, setTimeLeft] = useState(type === 'PTX' ? 45 : 0) // 45 seconds for presentations
     const videoRef = useRef<HTMLVideoElement>(null)
     const lastUpdateRef = useRef<number>(initialProgress)
-    const [isFocusMode, setIsFocusMode] = useState(false)
 
     // Handle Video Progress
     const handleVideoTimeUpdate = () => {
@@ -82,67 +81,8 @@ export default function TrainingTracker({ trainingId, userId, type, initialProgr
 
     return (
         <div style={{ marginTop: '24px' }}>
-            {/* Focus Mode Overlay */}
-            {isFocusMode && (
-                <div style={{ 
-                    position: 'fixed', 
-                    top: 0, 
-                    left: 0, 
-                    width: '100vw', 
-                    height: '100vh', 
-                    background: 'var(--bg-dark)', 
-                    zIndex: 9999,
-                    display: 'flex',
-                    flexDirection: 'column'
-                }}>
-                    <div style={{ padding: '16px 24px', display: 'flex', justifyContent: 'space-between', alignItems: 'center', background: 'rgba(0,0,0,0.5)', borderBottom: '1px solid var(--glass-border)' }}>
-                        <span style={{ fontWeight: 'bold', fontSize: '14px' }}>Odaklanma Modu: {isPTX ? 'Sunum' : 'Video'}</span>
-                        <button 
-                            onClick={() => setIsFocusMode(false)}
-                            style={{ background: 'rgba(255,255,255,0.1)', border: 'none', color: 'white', padding: '8px 16px', borderRadius: '8px', cursor: 'pointer' }}
-                        >
-                            Moddan Çık
-                        </button>
-                    </div>
-                    <div style={{ flex: 1, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-                        {isYoutube ? (
-                            <iframe src={embedUrl} style={{ width: '100%', height: '100%', border: 'none' }} allowFullScreen />
-                        ) : isVideo ? (
-                            <video ref={videoRef} controls onTimeUpdate={handleVideoTimeUpdate} onEnded={handleVideoEnded} style={{ width: '100%', height: '100%', maxHeight: '100vh' }}>
-                                <source src={fileUrl} type="video/mp4" />
-                            </video>
-                        ) : (
-                            <iframe src={`https://view.officeapps.live.com/op/view.aspx?src=${encodeURIComponent(fileUrl)}`} style={{ width: '100%', height: '100%', border: 'none' }} />
-                        )}
-                    </div>
-                </div>
-            )}
-
             {/* Media Display */}
             <div className="glass-panel" style={{ padding: '0', overflow: 'hidden', minHeight: '400px', display: 'flex', alignItems: 'center', justifyContent: 'center', position: 'relative' }}>
-                <button 
-                    onClick={() => setIsFocusMode(true)}
-                    style={{ 
-                        position: 'absolute', 
-                        top: '16px', 
-                        right: '16px', 
-                        zIndex: 5, 
-                        background: 'rgba(0,0,0,0.5)', 
-                        backdropFilter: 'blur(4px)',
-                        border: '1px solid rgba(255,255,255,0.2)', 
-                        color: 'white', 
-                        padding: '8px', 
-                        borderRadius: '8px', 
-                        cursor: 'pointer',
-                        fontSize: '12px',
-                        display: 'flex',
-                        alignItems: 'center',
-                        gap: '6px'
-                    }}
-                >
-                    <span>🔲</span> Odaklanma Modu
-                </button>
-
                 {isYoutube ? (
                     <iframe 
                         src={embedUrl}
