@@ -9,6 +9,11 @@ const RevealViewer = dynamic(() => import('@/components/RevealViewer'), {
     loading: () => <div className="w-full h-[600px] bg-gray-50 animate-pulse flex items-center justify-center rounded-3xl text-gray-400">Yükleniyor...</div>
 })
 
+const PDFSlideViewer = dynamic(() => import('@/components/PDFSlideViewer'), { 
+    ssr: false,
+    loading: () => <div className="w-full h-[600px] bg-gray-50 animate-pulse flex items-center justify-center rounded-3xl text-gray-400 text-sm uppercase tracking-widest font-bold">Döküman Hazırlanıyor...</div>
+})
+
 interface TrackerProps {
     trainingId: string
     userId: string
@@ -125,12 +130,10 @@ export default function TrainingTracker({ trainingId, userId, type, initialProgr
                         <source src={fileUrl || ''} type="video/mp4" />
                         Tarayıcınız video oynatmayı desteklemiyor.
                     </video>
-                ) : isPTX ? (
-                    <iframe 
-                        src={`https://view.officeapps.live.com/op/view.aspx?src=${encodeURIComponent(fileUrl || '')}`}
-                        style={{ width: '100%', height: '75vh', border: 'none' }}
-                        title="Sunum Görüntüleyici"
-                    />
+                ) : (isPTX || type === 'PDF') ? (
+                    <div className="w-full h-[650px]">
+                        <PDFSlideViewer fileUrl={fileUrl || ''} />
+                    </div>
                 ) : (
                     <iframe 
                         src={`https://docs.google.com/viewer?url=${encodeURIComponent(fileUrl || '')}&embedded=true`}
@@ -138,6 +141,7 @@ export default function TrainingTracker({ trainingId, userId, type, initialProgr
                         title="Döküman Görüntüleyici"
                     />
                 )}
+
             </div>
 
             {/* Progress Bar & Controls */}
