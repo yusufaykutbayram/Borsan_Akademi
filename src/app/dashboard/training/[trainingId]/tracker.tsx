@@ -25,7 +25,7 @@ interface TrackerProps {
 export default function TrainingTracker({ trainingId, userId, type, initialProgress, fileUrl }: TrackerProps) {
     const [progress, setProgress] = useState(initialProgress)
     const [isCompleted, setIsCompleted] = useState(initialProgress >= 100)
-    const [timeLeft, setTimeLeft] = useState(type === 'PTX' || type === 'REVEAL' || type === 'PDF' ? 45 : 0)
+    const [timeLeft, setTimeLeft] = useState(type === 'REVEAL' ? 45 : 0)
     const videoRef = useRef<HTMLVideoElement>(null)
     const lastUpdateRef = useRef<number>(initialProgress)
 
@@ -69,7 +69,7 @@ export default function TrainingTracker({ trainingId, userId, type, initialProgr
 
     // Handle Presentation/Reveal Timer
     useEffect(() => {
-        if ((type === 'PTX' || type === 'REVEAL' || type === 'PDF') && !isCompleted) {
+        if ((type === 'REVEAL') && !isCompleted) {
             const timer = setInterval(() => {
                 setTimeLeft(prev => {
                     if (prev <= 1) {
@@ -103,6 +103,16 @@ export default function TrainingTracker({ trainingId, userId, type, initialProgr
         embedUrl = `https://www.youtube.com/embed/${videoId}?rel=0`
     }
 
+    const handlePageChange = (current: number, total: number) => {
+        const currentPercentage = Math.floor((current / total) * 100)
+        if (currentPercentage > lastUpdateRef.current) {
+            setProgress(currentPercentage)
+            lastUpdateRef.current = currentPercentage
+            updateProgress(trainingId, userId, currentPercentage)
+            if (currentPercentage >= 100) setIsCompleted(true)
+        }
+    }
+
     return (
         <div style={{ marginTop: '24px' }}>
             {/* Media Display */}
@@ -132,9 +142,13 @@ export default function TrainingTracker({ trainingId, userId, type, initialProgr
                     </video>
                 ) : (isPTX || type === 'PDF') ? (
                     <div className="w-full h-[650px]">
-                        <PDFSlideViewer fileUrl={fileUrl || ''} />
+                        <PDFSlideViewer 
+                            fileUrl={fileUrl || ''} 
+                            onPageChange={handlePageChange}
+                        />
                     </div>
                 ) : (
+
                     <iframe 
                         src={`https://docs.google.com/viewer?url=${encodeURIComponent(fileUrl || '')}&embedded=true`}
                         style={{ width: '100%', height: '75vh', border: 'none' }}
@@ -154,7 +168,7 @@ export default function TrainingTracker({ trainingId, userId, type, initialProgr
                     <div className="h-full bg-primary rounded-full transition-all duration-1000" style={{ width: `${progress}%` }}></div>
                 </div>
 
-                {(isPTX || isYoutube || isReveal || type === 'PDF') && !isCompleted && (
+                {(isYoutube || isReveal) && !isCompleted && (
                     <div className="text-center">
                         {timeLeft > 0 ? (
                             <p className="text-gray-400 text-sm font-medium">

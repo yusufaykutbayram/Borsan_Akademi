@@ -8,9 +8,10 @@ pdfjsLib.GlobalWorkerOptions.workerSrc = `https://cdnjs.cloudflare.com/ajax/libs
 
 interface PDFSlideViewerProps {
     fileUrl: string;
+    onPageChange?: (currentPage: number, totalPages: number) => void;
 }
 
-export default function PDFSlideViewer({ fileUrl }: PDFSlideViewerProps) {
+export default function PDFSlideViewer({ fileUrl, onPageChange }: PDFSlideViewerProps) {
     const deckDivRef = useRef<HTMLDivElement>(null)
     const [pages, setPages] = useState<string[]>([])
     const [loading, setLoading] = useState(true)
@@ -67,6 +68,16 @@ export default function PDFSlideViewer({ fileUrl }: PDFSlideViewerProps) {
                     backgroundTransition: 'fade'
                 })
                 await deck.initialize()
+                
+                deck.on('slidechanged', (event: any) => {
+                    if (onPageChange) {
+                        onPageChange(event.indexh + 1, pages.length)
+                    }
+                })
+
+                // Initial progress report
+                if (onPageChange) onPageChange(1, pages.length)
+
                 setIsLoaded(true)
             }
         }
