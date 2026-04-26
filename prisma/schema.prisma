@@ -34,7 +34,8 @@ model Training {
   id          String   @id @default(uuid())
   title       String
   description String?
-  type        String   @default("VIDEO") // VIDEO, PDF, FILE
+  type        String   @default("VIDEO") // VIDEO, PDF, FILE, REVEAL
+  category    String   @default("DIĞER") // VIDEO, KALITE, URETIM, ISG
   file_url    String?
   created_at  DateTime @default(now())
 

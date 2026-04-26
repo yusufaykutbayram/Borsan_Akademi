@@ -45,6 +45,20 @@ export function AddTrainingForm() {
                         <option value="REVEAL">İnteraktif Slayt (Reveal.js)</option>
                     </select>
                 </div>
+                <div className="space-y-2">
+                    <label className="text-[10px] font-bold text-gray-400 uppercase tracking-widest ml-1" htmlFor="category">Eğitim Kategorisi</label>
+                    <select 
+                        className="w-full bg-gray-50 border border-gray-100 rounded-xl px-5 py-4 text-gray-900 focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary transition-all font-medium" 
+                        id="category" 
+                        name="category" 
+                        required
+                    >
+                        <option value="VIDEO">Video Eğitimler</option>
+                        <option value="KALITE">Kalite Eğitimleri</option>
+                        <option value="URETIM">Üretim Eğitimleri</option>
+                        <option value="ISG">İş Sağlığı Güvenliği Eğitimleri</option>
+                    </select>
+                </div>
             </div>
 
             {type !== 'REVEAL' ? (

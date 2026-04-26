@@ -67,6 +67,21 @@ export function EditTrainingForm({ training }: { training: any }) {
                     </div>
 
                     <div className="space-y-2">
+                        <label className="text-[10px] font-bold text-gray-400 uppercase tracking-widest ml-1">Eğitim Kategorisi</label>
+                        <select 
+                            className="w-full bg-gray-50 border border-gray-100 rounded-2xl px-6 py-4 text-gray-900 focus:outline-none focus:ring-4 focus:ring-primary/10 focus:border-primary transition-all font-bold" 
+                            name="category" 
+                            defaultValue={training.category || "VIDEO"}
+                            required
+                        >
+                            <option value="VIDEO">Video Eğitimler</option>
+                            <option value="KALITE">Kalite Eğitimleri</option>
+                            <option value="URETIM">Üretim Eğitimleri</option>
+                            <option value="ISG">İş Sağlığı Güvenliği Eğitimleri</option>
+                        </select>
+                    </div>
+
+                    <div className="space-y-2">
                         <label className="text-[10px] font-bold text-gray-400 uppercase tracking-widest ml-1">Materyal Türü</label>
                         <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
                             {['VIDEO', 'PTX', 'REVEAL', 'PDF'].map((t) => (

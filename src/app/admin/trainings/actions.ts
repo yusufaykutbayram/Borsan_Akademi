@@ -6,6 +6,7 @@ export async function addTraining(formData: FormData) {
   const title = formData.get("title") as string
   const description = formData.get("description") as string
   const type = formData.get("type") as string
+  const category = formData.get("category") as string
   let file_url = formData.get("file_url") as string
   const content = formData.get("content") as string
 
@@ -25,6 +26,7 @@ export async function addTraining(formData: FormData) {
         title,
         description,
         type,
+        category: category || "VIDEO",
         file_url
       }
     })

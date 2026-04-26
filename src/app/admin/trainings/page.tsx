@@ -31,6 +31,7 @@ export default async function TrainingPage() {
                     <thead>
                         <tr className="bg-gray-50/50">
                             <th className="px-8 py-5 text-[10px] font-bold text-gray-400 uppercase tracking-widest border-b border-gray-100">Eğitim Adı</th>
+                            <th className="px-8 py-5 text-[10px] font-bold text-gray-400 uppercase tracking-widest border-b border-gray-100">Kategori</th>
                             <th className="px-8 py-5 text-[10px] font-bold text-gray-400 uppercase tracking-widest border-b border-gray-100">Materyal</th>
                             <th className="px-8 py-5 text-[10px] font-bold text-gray-400 uppercase tracking-widest border-b border-gray-100">Kayıt Tarihi</th>
                             <th className="px-8 py-5 text-[10px] font-bold text-gray-400 uppercase tracking-widest border-b border-gray-100 text-right">İşlem</th>
@@ -39,9 +40,20 @@ export default async function TrainingPage() {
                     <tbody className="divide-y divide-gray-50">
                         {trainings.map(t => {
                             const config = typeConfig[t.type] || typeConfig.FILE;
+                            const catLabels: Record<string, string> = {
+                                VIDEO: 'Video Eğitim',
+                                KALITE: 'Kalite',
+                                URETIM: 'Üretim',
+                                ISG: 'İSG'
+                            }
                             return (
                                 <tr key={t.id} className="hover:bg-gray-50/30 transition-colors">
                                     <td className="px-8 py-6 font-bold text-secondary">{t.title}</td>
+                                    <td className="px-8 py-6">
+                                        <span className="text-[10px] font-black text-gray-400 uppercase tracking-widest bg-gray-50 px-3 py-1 rounded-lg">
+                                            {catLabels[t.category] || 'Diğer'}
+                                        </span>
+                                    </td>
                                     <td className="px-8 py-6">
                                         <span 
                                             className="px-4 py-1.5 rounded-full text-[11px] font-bold uppercase tracking-wider"
