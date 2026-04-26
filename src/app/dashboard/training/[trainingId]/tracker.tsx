@@ -25,7 +25,7 @@ interface TrackerProps {
 export default function TrainingTracker({ trainingId, userId, type, initialProgress, fileUrl }: TrackerProps) {
     const [progress, setProgress] = useState(initialProgress)
     const [isCompleted, setIsCompleted] = useState(initialProgress >= 100)
-    const [timeLeft, setTimeLeft] = useState(type === 'PTX' || type === 'REVEAL' ? 45 : 0)
+    const [timeLeft, setTimeLeft] = useState(type === 'PTX' || type === 'REVEAL' || type === 'PDF' ? 45 : 0)
     const videoRef = useRef<HTMLVideoElement>(null)
     const lastUpdateRef = useRef<number>(initialProgress)
 
@@ -69,7 +69,7 @@ export default function TrainingTracker({ trainingId, userId, type, initialProgr
 
     // Handle Presentation/Reveal Timer
     useEffect(() => {
-        if ((type === 'PTX' || type === 'REVEAL') && !isCompleted) {
+        if ((type === 'PTX' || type === 'REVEAL' || type === 'PDF') && !isCompleted) {
             const timer = setInterval(() => {
                 setTimeLeft(prev => {
                     if (prev <= 1) {
@@ -154,7 +154,7 @@ export default function TrainingTracker({ trainingId, userId, type, initialProgr
                     <div className="h-full bg-primary rounded-full transition-all duration-1000" style={{ width: `${progress}%` }}></div>
                 </div>
 
-                {(isPTX || isYoutube || isReveal) && !isCompleted && (
+                {(isPTX || isYoutube || isReveal || type === 'PDF') && !isCompleted && (
                     <div className="text-center">
                         {timeLeft > 0 ? (
                             <p className="text-gray-400 text-sm font-medium">
