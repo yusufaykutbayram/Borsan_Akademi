@@ -41,8 +41,18 @@ export async function addTraining(formData: FormData) {
         }))
       })
     }
+
+    // Create a global announcement for the new training
+    await prisma.announcement.create({
+      data: {
+        title: "Yeni Eğitim Atandı! 📚",
+        content: `"${title}" başlıklı yeni eğitiminiz panelinize eklendi. Hemen izleyip gelişiminizi sürdürebilirsiniz.`,
+        type: "NEW_TRAINING"
+      }
+    })
     
     revalidatePath("/admin/trainings")
+    revalidatePath("/dashboard")
     return { success: true }
   } catch (e: unknown) {
     console.error(e)
@@ -62,4 +72,3 @@ export async function deleteTraining(id: string) {
     return { error: "Eğitim silinirken bir hata oluştu." }
   }
 }
-

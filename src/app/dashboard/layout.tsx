@@ -4,6 +4,7 @@ import Link from "next/link";
 import Image from "next/image";
 import { NavLinks } from "./nav-links";
 import FloatingAssistant from "@/components/FloatingAssistant";
+import NotificationBell from "@/components/NotificationBell";
 
 export default async function DashboardLayout({ children }: { children: React.ReactNode }) {
     const session = await auth();
@@ -34,10 +35,7 @@ export default async function DashboardLayout({ children }: { children: React.Re
 
                         {/* Right Actions */}
                         <div className="flex items-center space-x-4">
-                            <button className="p-2 rounded-full text-gray-400 hover:text-primary hover:bg-gray-100 transition-all">
-                                <span className="sr-only">Bildirimler</span>
-                                <span className="text-xl">🔔</span>
-                            </button>
+                            <NotificationBell />
                             
                             <div className="flex items-center space-x-3 border-l pl-4 ml-2 border-gray-100">
                                 <div className="w-9 h-9 bg-primary/10 text-primary rounded-full flex items-center justify-center font-bold text-sm">

@@ -143,3 +143,12 @@ model CompetitionSession {
 
   user User @relation(fields: [user_id], references: [id], onDelete: Cascade)
 }
+
+model Announcement {
+  id         String   @id @default(uuid())
+  title      String
+  content    String
+  type       String   @default("INFO") // INFO, NEW_TRAINING, SYSTEM
+  created_at DateTime @default(now())
+}
+
