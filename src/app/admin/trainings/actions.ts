@@ -55,7 +55,7 @@ export async function deleteTraining(id: string) {
     await prisma.training.delete({
       where: { id }
     })
-    revalidatePath("/admin/training")
+    revalidatePath("/admin/trainings")
     return { success: true }
   } catch (e) {
     console.error(e)

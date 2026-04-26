@@ -6,12 +6,15 @@ import TrainingTracker from "./tracker";
 
 export const dynamic = 'force-dynamic'
 
-export default async function TrainingViewPage({ params }: { params: Promise<{ id: string }> }) {
-    const { id } = await params
+export default async function TrainingViewPage({ params }: any) {
+    const resolvedParams = await params
+    const id = resolvedParams?.trainingId
     const session = await auth()
+    
     if (!session) redirect("/login")
+    if (!id || id === 'undefined') return notFound()
 
-    const training = await prisma.training.findUnique({ where: { id } })
+    const training = await prisma.training.findFirst({ where: { id } })
     if (!training) return notFound()
 
     let progress = await prisma.trainingProgress.findUnique({
