@@ -1,4 +1,3 @@
-import { GoogleGenerativeAI } from "@google/generative-ai";
 import { NextResponse } from "next/server";
 
 export async function GET() {
@@ -9,21 +8,25 @@ export async function GET() {
     }
 
     try {
-        const genAI = new GoogleGenerativeAI(apiKey);
-        const modelsResult = await genAI.getGenerativeModel({ model: "gemini-1.5-flash" }).listModels(); // This is not how you list models
-        
-        // Correct way to list models with the SDK
-        // Actually, the SDK doesn't have a direct listModels on the genAI instance sometimes depending on version.
-        // Let's try a direct fetch to the API to see what's allowed.
+        // Direct fetch to list all models available for this API key
         const res = await fetch(`https://generativelanguage.googleapis.com/v1beta/models?key=${apiKey}`);
         const data = await res.json();
 
+        if (data.error) {
+            return NextResponse.json({ 
+                status: "Error", 
+                message: data.error.message,
+                code: data.error.code,
+                status_code: data.error.status
+            });
+        }
+
         return NextResponse.json({ 
-            status: "Check", 
-            models: data.models?.map((m: any) => m.name) || data
+            status: "Success", 
+            available_models: data.models?.map((m: any) => m.name) || "No models list found",
+            raw_data: data
         });
     } catch (error: any) {
         return NextResponse.json({ status: "Error", message: error.message });
     }
 }
-
