@@ -1,3 +1,4 @@
+import { GoogleGenerativeAI } from "@google/generative-ai";
 import { NextResponse } from "next/server";
 
 export async function GET() {
@@ -8,25 +9,19 @@ export async function GET() {
     }
 
     try {
-        // Direct fetch to list all models available for this API key
-        const res = await fetch(`https://generativelanguage.googleapis.com/v1beta/models?key=${apiKey}`);
-        const data = await res.json();
-
-        if (data.error) {
-            return NextResponse.json({ 
-                status: "Error", 
-                message: data.error.message,
-                code: data.error.code,
-                status_code: data.error.status
-            });
-        }
-
+        const genAI = new GoogleGenerativeAI(apiKey);
+        const model = genAI.getGenerativeModel({ model: "gemini-2.5-flash" });
+        const result = await model.generateContent("Hello, verify connection with 2.5-flash.");
+        const response = await result.response;
         return NextResponse.json({ 
             status: "Success", 
-            available_models: data.models?.map((m: any) => m.name) || "No models list found",
-            raw_data: data
+            message: "Connection verified with Gemini 2.5 Flash!", 
+            response: response.text()
         });
     } catch (error: any) {
-        return NextResponse.json({ status: "Error", message: error.message });
+        return NextResponse.json({ 
+            status: "Error", 
+            message: error.message || error.toString()
+        }, { status: 500 });
     }
 }
