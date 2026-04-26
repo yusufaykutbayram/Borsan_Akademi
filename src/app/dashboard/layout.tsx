@@ -3,6 +3,7 @@ import { redirect } from "next/navigation";
 import Link from "next/link";
 import Image from "next/image";
 import { NavLinks } from "./nav-links";
+import FloatingAssistant from "@/components/FloatingAssistant";
 
 export default async function DashboardLayout({ children }: { children: React.ReactNode }) {
     const session = await auth();
@@ -72,6 +73,10 @@ export default async function DashboardLayout({ children }: { children: React.Re
                     <span className="text-xl">📚</span>
                     <span className="text-[10px] font-bold mt-1">Eğitimler</span>
                 </Link>
+                <Link href="/dashboard/ai-chat" className="text-gray-400 flex flex-col items-center">
+                    <span className="text-xl">🤖</span>
+                    <span className="text-[10px] font-bold mt-1">Asistan</span>
+                </Link>
                 <Link href="/dashboard/competition" className="text-gray-400 flex flex-col items-center">
                     <span className="text-xl">🏆</span>
                     <span className="text-[10px] font-bold mt-1">Yarışma</span>
@@ -81,6 +86,8 @@ export default async function DashboardLayout({ children }: { children: React.Re
                     <span className="text-[10px] font-bold mt-1">Profil</span>
                 </Link>
             </nav>
+
+            <FloatingAssistant />
         </div>
     )
 }

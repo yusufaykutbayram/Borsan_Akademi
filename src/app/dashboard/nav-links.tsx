@@ -10,6 +10,7 @@ export function NavLinks() {
         { href: '/dashboard', label: 'Ana Sayfa' },
         { href: '/dashboard/trainings', label: 'Eğitimler' },
         { href: '/dashboard/competition', label: 'Yarışma' },
+        { href: '/dashboard/ai-chat', label: 'Gelişim Asistanı' },
         { href: '/dashboard/profile', label: 'Profilim' },
     ]
 
