@@ -52,24 +52,27 @@ export async function POST(req: Request) {
         const genAI = new GoogleGenerativeAI(apiKey);
         const knowledgeBase = getKnowledgeBase();
         
-        const systemPrompt = `
-SENİN KİMLİĞİN VE ROLÜN:
-Sen "Borsan Akademi Dijital Rehberi"sin.
-
-${knowledgeBase}
-
-TEMEL PRENSİPLERİN:
-1. Profesyonel ve destekleyici ol.
-2. Sorulara Türkçe cevap ver.
-`;
+        const systemPrompt = `Sen "Borsan Akademi Dijital Rehberi"sin. Aşağıdaki bilgilere dayanarak profesyonel ve destekleyici bir şekilde Türkçe cevap ver:
+        
+        ${knowledgeBase}`;
 
         const model = genAI.getGenerativeModel({ 
-            model: "gemini-1.5-flash",
-            systemInstruction: systemPrompt,
+            model: "gemini-1.5-flash", // Using the standard ID
         });
 
+        // Use generateContent instead of startChat for maximum compatibility if needed, 
+        // but let's try keeping startChat with the prompt in the first message if systemInstruction failed.
         const chat = model.startChat({
-            history: history || [],
+            history: history && history.length > 0 ? history : [
+                {
+                    role: "user",
+                    parts: [{ text: systemPrompt }]
+                },
+                {
+                    role: "model",
+                    parts: [{ text: "Anlaşıldı. Borsan Akademi Dijital Rehberi olarak personelin tüm gelişim süreçlerinde onlara rehberlik etmeye hazırım. Nasıl yardımcı olabilirim?" }]
+                }
+            ],
         });
 
         const result = await chat.sendMessage(message);
