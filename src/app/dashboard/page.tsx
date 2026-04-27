@@ -29,6 +29,12 @@ export default async function DashboardPage() {
         };
     }).slice(0, 3);
 
+    const totalTrainingsCount = await prisma.training.count();
+    const completedTrainingsCount = userProgress.filter(p => p.status === 'COMPLETED').length;
+    const overallProgress = totalTrainingsCount > 0 
+        ? Math.round((completedTrainingsCount / totalTrainingsCount) * 100) 
+        : 0;
+
     const topUsers = await prisma.user.findMany({
         where: { role: 'EMPLOYEE' },
         orderBy: { xp_points: 'desc' },
@@ -139,13 +145,19 @@ export default async function DashboardPage() {
                     </div>
                     <div>
                         <div className="flex justify-between items-baseline mb-3">
-                            <p className="text-4xl sm:text-5xl font-black text-secondary tracking-tighter">%65</p>
-                            <p className="text-gray-400 text-[10px] font-medium uppercase">4/6 Tamamlandı</p>
+                            <p className="text-4xl sm:text-5xl font-black text-secondary tracking-tighter">%{overallProgress}</p>
+                            <p className="text-gray-400 text-[10px] font-medium uppercase">{completedTrainingsCount}/{totalTrainingsCount} Tamamlandı</p>
                         </div>
                         <div className="w-full h-2 bg-gray-100 rounded-full overflow-hidden">
-                            <div className="h-full bg-gradient-to-r from-green-400 to-green-600 rounded-full transition-all duration-1000" style={{ width: '65%' }}></div>
+                            <div className="h-full bg-gradient-to-r from-green-400 to-green-600 rounded-full transition-all duration-1000" style={{ width: `${overallProgress}%` }}></div>
                         </div>
-                        <p className="text-gray-400 text-[10px] mt-4 font-medium italic group-hover:text-primary transition-colors leading-relaxed">Harika gidiyorsun! 2 modül sonra sertifika alabilirsin.</p>
+                        <p className="text-gray-400 text-[10px] mt-4 font-medium italic group-hover:text-primary transition-colors leading-relaxed">
+                            {overallProgress === 100 
+                                ? "Tebrikler! Tüm eğitimleri başarıyla tamamladın." 
+                                : overallProgress > 0 
+                                    ? "Harika gidiyorsun! Gelişim yolculuğuna devam et." 
+                                    : "Hadi, bugün yeni bir şeyler öğrenmeye ne dersin?"}
+                        </p>
                     </div>
                 </div>
             </div>
