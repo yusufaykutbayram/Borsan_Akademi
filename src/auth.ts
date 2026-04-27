@@ -9,14 +9,14 @@ declare module "next-auth" {
     user: {
       id: string;
       role: string;
-      tc_number: string;
+      tc_number?: string | null;
       force_pw_change: boolean;
     } & DefaultSession["user"]
   }
 
   interface User {
     role: string;
-    tc_number: string;
+    tc_number?: string | null;
     force_pw_change: boolean;
   }
 }
@@ -24,7 +24,7 @@ declare module "next-auth" {
 declare module "next-auth/jwt" {
   interface JWT {
     role?: string;
-    tc_number?: string;
+    tc_number?: string | null;
     force_pw_change?: boolean;
   }
 }
@@ -60,7 +60,7 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
               id: user.id,
               name: user.name,
               role: user.role,
-              tc_number: user.tc_number,
+              tc_number: user.tc_number || "",
               force_pw_change: user.force_pw_change
             };
           }
