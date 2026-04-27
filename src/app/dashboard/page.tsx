@@ -58,9 +58,6 @@ export default async function DashboardPage() {
                     {/* Top Section: Level and Points side-by-side or tight stack */}
                     <div className="p-5 sm:p-8 flex flex-col sm:flex-row sm:items-center justify-between gap-6 bg-gradient-to-br from-white to-gray-50/50">
                         <div className="flex items-center gap-4">
-                            <div className="w-14 h-14 sm:w-20 sm:h-20 bg-primary/10 rounded-2xl flex items-center justify-center text-primary text-2xl sm:text-3xl font-black shadow-inner flex-shrink-0">
-                                {user?.name?.[0]}
-                            </div>
                             <div>
                                 <p className="text-gray-400 text-[10px] font-bold uppercase tracking-[0.2em] mb-0.5">Mevcut Seviye</p>
                                 <h3 className="text-xl sm:text-3xl font-bold text-secondary leading-tight">Gelişim Uzmanı</h3>
@@ -73,15 +70,15 @@ export default async function DashboardPage() {
 
                         <div className="flex items-center gap-6 sm:pl-8 sm:border-l border-gray-100 pt-4 sm:pt-0 border-t sm:border-t-0">
                             <div>
-                                <p className="text-gray-400 text-[10px] font-bold uppercase tracking-[0.2em] mb-0.5">Toplam Birikim</p>
+                                <p className="text-gray-400 text-[10px] font-bold uppercase tracking-[0.2em] mb-0.5">Toplam Puan</p>
                                 <div className="flex items-baseline gap-1">
                                     <span className="text-4xl sm:text-5xl font-black text-secondary tracking-tighter">{user?.xp_points}</span>
                                     <span className="text-primary font-bold text-sm">XP</span>
                                 </div>
                             </div>
                             <div className="flex-1 sm:flex-none text-right">
-                                <div className="inline-block px-3 py-1 bg-secondary/5 rounded-full border border-secondary/5">
-                                    <p className="text-secondary text-[10px] font-bold uppercase tracking-widest">Sıralama: <span className="text-primary">#12</span></p>
+                                <div className="inline-block px-3 py-1 bg-primary/5 rounded-full border border-primary/10">
+                                    <p className="text-secondary text-[10px] font-bold uppercase tracking-widest">Genel Sıralama: <span className="text-primary">#12</span></p>
                                 </div>
                             </div>
                         </div>
