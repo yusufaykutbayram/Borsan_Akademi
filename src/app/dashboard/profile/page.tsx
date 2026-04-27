@@ -1,11 +1,19 @@
 import { auth } from "@/auth";
 import { prisma } from "@/lib/prisma";
+import { PerformanceCard } from "./performance-card";
 
 export default async function ProfilePage() {
     const session = await auth();
     const user = await prisma.user.findUnique({
         where: { id: session!.user.id },
-        include: { user_badges: { include: { badge: true } }, certificates: true }
+        include: { 
+            user_badges: { include: { badge: true } }, 
+            certificates: true,
+            performance_evals: {
+                include: { metrics: true },
+                orderBy: { evaluated_at: 'desc' }
+            }
+        }
     });
 
     return (
@@ -48,6 +56,21 @@ export default async function ProfilePage() {
                     </div>
                 </div>
             </div>
+
+            {/* Performance Evaluations Section */}
+            <section className="space-y-6">
+                <h3 className="text-2xl font-bold text-secondary">Performans Geçmişi</h3>
+                <div className="grid grid-cols-1 gap-6">
+                    {user?.performance_evals.map(evaluation => (
+                        <PerformanceCard key={evaluation.id} evaluation={evaluation} />
+                    ))}
+                    {(user?.performance_evals.length || 0) === 0 && (
+                        <div className="py-12 bg-surface rounded-3xl border border-dashed border-gray-200 text-center">
+                            <p className="text-gray-400 text-sm">Henüz performans değerlendirmesi bulunmuyor.</p>
+                        </div>
+                    )}
+                </div>
+            </section>
 
             <div className="grid grid-cols-1 md:grid-cols-2 gap-12 pt-4">
                 {/* Badges Section */}
