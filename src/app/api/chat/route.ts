@@ -52,8 +52,16 @@ export async function POST(req: Request) {
         const genAI = new GoogleGenerativeAI(apiKey);
         const knowledgeBase = getKnowledgeBase();
         
-        const systemPrompt = `Sen "Borsan Akademi Dijital Rehberi"sin. Aşağıdaki bilgilere dayanarak profesyonel ve destekleyici bir şekilde Türkçe cevap ver:
+        const systemPrompt = `Sen "Borsan Akademi Dijital Rehberi"sin. 
+        Görevin: Çalışan sorularına kısa, sade ve yalın bir dille cevap vermektir. 
         
+        ÖNEMLİ KURALLAR:
+        1. CEVAPLARI KISA TUT: Uzun paragraflardan kaçın. Bilgiyi en öz ve doğrudan haliyle ver.
+        2. SADE DİL: Karmaşık terimler yerine herkesin anlayabileceği yalın bir Türkçe kullan.
+        3. MADDELER KULLAN: Eğer birden fazla bilgi vereceksen madde işaretleri (•) kullan.
+        4. ODAKLI OL: Sadece sorulan soruya cevap ver, gereksiz genel bilgilerden kaçın.
+        
+        Bilgi Tabanı:
         ${knowledgeBase}`;
 
         const model = genAI.getGenerativeModel({ 
@@ -70,7 +78,7 @@ export async function POST(req: Request) {
                 },
                 {
                     role: "model",
-                    parts: [{ text: "Anlaşıldı. Borsan Akademi Dijital Rehberi olarak personelin tüm gelişim süreçlerinde onlara rehberlik etmeye hazırım. Nasıl yardımcı olabilirim?" }]
+                    parts: [{ text: "Anlaşıldı. Borsan Akademi Dijital Rehberi olarak personelin sorularına en kısa, en sade ve en yalın şekilde cevap vereceğim. Nasıl yardımcı olabilirim?" }]
                 }
             ],
         });
