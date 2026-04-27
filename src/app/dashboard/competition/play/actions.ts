@@ -1,59 +1,42 @@
 'use server'
-import { prisma } from "@/lib/prisma"
+
 import { auth } from "@/auth"
+import { prisma } from "@/lib/prisma"
+import { revalidatePath } from "next/cache"
 
 export async function submitQuiz(score: number) {
-    const session = await auth();
-    if (!session) return { error: "Oturum süresi doldu." };
+    const session = await auth()
+    if (!session?.user?.id) return { error: "Oturum açılmadı" }
 
-    const today = new Date();
-    today.setHours(0,0,0,0);
+    try {
+        // Update user XP
+        const user = await prisma.user.update({
+            where: { id: session.user.id },
+            data: { xp_points: { increment: score } }
+        })
 
-    const existing = await prisma.competitionSession.findFirst({
-        where: { user_id: session.user.id, date: { gte: today } }
-    });
+        // Fetch all users to calculate rank
+        // Sorted by XP descending
+        const allUsers = await prisma.user.findMany({
+            orderBy: { xp_points: 'desc' },
+            select: { id: true, name: true, xp_points: true }
+        })
 
-    if (existing) return { error: "Bugünlük yarışma hakkınızı zaten kullandınız." };
+        const totalUsers = allUsers.length
+        const rank = allUsers.findIndex(u => u.id === session.user.id) + 1
+        const topUsers = allUsers.slice(0, 10).map(u => ({ ...u, xp: u.xp_points }))
 
-    // Create session record
-    await prisma.competitionSession.create({
-        data: {
-            user_id: session.user.id,
-            category: "MIXED",
-            score: score,
-            duration_sec: 400 // Logic based on how fast they finished
+        revalidatePath('/dashboard/competition')
+        revalidatePath('/dashboard/profile')
+
+        return { 
+            success: true, 
+            rank, 
+            totalUsers, 
+            topUsers 
         }
-    });
-
-    // Update User XP
-    await prisma.user.update({
-        where: { id: session.user.id },
-        data: { xp_points: { increment: score } }
-    });
-
-    // Automatic Gamification logic: Unlock badges based on XP
-    const user = await prisma.user.findUnique({
-        where: { id: session.user.id },
-        include: { user_badges: true }
-    });
-
-    const earnedBadgeIds = user!.user_badges.map(b => b.badge_id);
-
-    const eligibleBadges = await prisma.badge.findMany({
-        where: {
-            required_xp: { lte: user!.xp_points },
-            id: { notIn: earnedBadgeIds }
-        }
-    });
-
-    if (eligibleBadges.length > 0) {
-        await prisma.userBadge.createMany({
-            data: eligibleBadges.map(b => ({
-                user_id: user!.id,
-                badge_id: b.id
-            }))
-        });
+    } catch (error: any) {
+        console.error("Submit quiz error:", error)
+        return { error: "Puan kaydedilirken bir hata oluştu" }
     }
-
-    return { success: true }
 }

@@ -41,6 +41,9 @@ export default async function DashboardPage() {
                         <Link href="/dashboard/competition" className="bg-white/10 hover:bg-white/20 backdrop-blur-md text-white px-8 py-4 rounded-xl font-semibold transition-all">
                             Yarışmaya Katıl
                         </Link>
+                        <Link href="/dashboard/quizzes" className="bg-white/10 hover:bg-white/20 backdrop-blur-md text-white px-8 py-4 rounded-xl font-semibold transition-all">
+                            Quizler
+                        </Link>
                     </div>
                 </div>
                 {/* Abstract shapes for "Innovative" feel */}
@@ -62,6 +65,30 @@ export default async function DashboardPage() {
                     <div className="flex items-baseline gap-2">
                         <p className="text-5xl font-bold text-secondary">{user?.xp_points}</p>
                         <span className="text-primary font-bold">XP</span>
+                    </div>
+                </div>
+
+                {/* Mobile Leaderboard (Only visible on mobile) */}
+                <div className="md:hidden space-y-4">
+                    <div className="flex justify-between items-center px-2">
+                        <h2 className="text-xl font-bold text-secondary">Liderlik Tablosu</h2>
+                        <Link href="/dashboard/competition" className="text-primary font-semibold text-xs hover:underline">Yarışmaya Katıl</Link>
+                    </div>
+                    <div className="bg-white rounded-3xl shadow-soft border border-gray-100 overflow-hidden">
+                        {topUsers.map((u, index) => (
+                            <div key={u.id} className={`flex items-center p-4 ${index !== topUsers.length - 1 ? 'border-b border-gray-50' : ''} ${u.id === session?.user.id ? 'bg-primary/5' : ''}`}>
+                                <div className={`w-6 h-6 rounded-full flex items-center justify-center text-xs font-bold mr-3 ${index === 0 ? 'bg-yellow-400 text-white' : index === 1 ? 'bg-gray-300 text-white' : index === 2 ? 'bg-orange-400 text-white' : 'text-gray-400'}`}>
+                                    {index + 1}
+                                </div>
+                                <div className="flex-1">
+                                    <p className="font-bold text-secondary text-sm">{u.name} {u.id === session?.user.id && '(Sen)'}</p>
+                                </div>
+                                <div className="text-right">
+                                    <span className="text-secondary font-bold text-sm">{u.xp_points}</span>
+                                    <span className="text-gray-400 text-[10px] ml-1">XP</span>
+                                </div>
+                            </div>
+                        ))}
                     </div>
                 </div>
                 <div className="bg-white p-8 rounded-3xl shadow-soft border border-gray-100 flex flex-col justify-between h-48">
@@ -107,8 +134,8 @@ export default async function DashboardPage() {
                     </div>
                 </section>
 
-                {/* Leaderboard Section */}
-                <section>
+                {/* Leaderboard Section (Hidden on mobile) */}
+                <section className="hidden md:block">
                     <div className="flex justify-between items-center mb-8">
                         <h2 className="text-2xl font-bold text-secondary">Liderlik Tablosu</h2>
                         <Link href="/dashboard/competition" className="text-primary font-semibold text-sm hover:underline">Yarışmaya Katıl</Link>

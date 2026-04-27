@@ -9,6 +9,7 @@ export function NavLinks() {
     const links = [
         { href: '/dashboard', label: 'Ana Sayfa' },
         { href: '/dashboard/trainings', label: 'Eğitimler' },
+        { href: '/dashboard/quizzes', label: 'Quizler' },
         { href: '/dashboard/competition', label: 'Yarışma' },
         { href: '/dashboard/ai-chat', label: 'Gelişim Asistanı' },
         { href: '/dashboard/profile', label: 'Profilim' },

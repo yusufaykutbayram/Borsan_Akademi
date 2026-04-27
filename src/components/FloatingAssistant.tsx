@@ -1,6 +1,7 @@
 'use client'
 
 import { useState, useRef, useEffect } from 'react'
+import Image from 'next/image'
 
 export default function FloatingAssistant() {
     const [isOpen, setIsOpen] = useState(false)
@@ -59,15 +60,22 @@ export default function FloatingAssistant() {
             {/* Toggle Button */}
             <button 
                 onClick={() => setIsOpen(!isOpen)}
-                className={`fixed bottom-24 right-8 z-[60] w-16 h-16 rounded-2xl flex items-center justify-center shadow-2xl transition-all duration-300 transform hover:scale-110 active:scale-95 ${isOpen ? 'bg-secondary rotate-90' : 'bg-primary'}`}
+                className={`fixed bottom-24 right-8 z-[60] w-16 h-16 rounded-2xl flex items-center justify-center shadow-lg transition-all duration-500 transform hover:scale-110 active:scale-95 overflow-hidden ${isOpen ? 'bg-secondary rotate-90' : 'bg-transparent border-2 border-primary'}`}
                 style={{ 
-                    boxShadow: isOpen ? '0 12px 24px rgba(0,0,0,0.2)' : '0 12px 24px rgba(227, 6, 19, 0.3)' 
+                    boxShadow: isOpen ? '0 8px 16px rgba(0,0,0,0.1)' : '0 8px 16px rgba(227, 6, 19, 0.12)' 
                 }}
             >
                 {isOpen ? (
                     <span className="text-3xl text-white">✕</span>
                 ) : (
-                    <span className="text-3xl text-white">🤖</span>
+                    <div className="relative w-full h-full">
+                        <Image 
+                            src="/images/mascot.png" 
+                            alt="Borsan Mascot" 
+                            fill 
+                            className="object-cover"
+                        />
+                    </div>
                 )}
             </button>
 
@@ -75,7 +83,16 @@ export default function FloatingAssistant() {
             {isOpen && (
                 <div className="fixed bottom-44 right-8 z-[60] w-[380px] h-[500px] bg-white rounded-3xl shadow-2xl border border-gray-100 flex flex-col overflow-hidden animate-slide-up">
                     <div className="bg-primary p-6 text-white flex items-center gap-4">
-                        <div className="w-10 h-10 bg-white/20 rounded-xl flex items-center justify-center text-xl">🤖</div>
+                        <div className="w-12 h-12 bg-white/20 rounded-xl flex items-center justify-center p-1">
+                            <div className="relative w-full h-full">
+                                <Image 
+                                    src="/images/mascot.png" 
+                                    alt="Mascot Icon" 
+                                    fill 
+                                    className="object-contain"
+                                />
+                            </div>
+                        </div>
                         <div>
                             <h3 className="font-bold text-sm">Gelişim Asistanı</h3>
                             <p className="text-[10px] text-white/70 uppercase tracking-widest font-bold">Çevrimiçi • Borsan Akademi</p>

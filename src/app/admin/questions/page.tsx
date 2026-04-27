@@ -1,60 +1,58 @@
 import { prisma } from "@/lib/prisma"
+import { ExcelImportButton } from "@/components/admin/excel-import-button"
+import { QuizListAdmin } from "@/components/admin/quiz-list-admin"
 
-export const dynamic = 'force-dynamic'
-
-export default async function QuestionsPage() {
-    const questions = await prisma.question.findMany({
-        orderBy: { category: 'asc' },
-        include: { answers: true }
+export default async function AdminQuestionsPage() {
+    // Fetch all Quiz-type trainings with their exams and questions
+    const quizTrainings = await prisma.training.findMany({
+        where: { type: 'QUIZ' },
+        include: {
+            exams: {
+                include: {
+                    questions: {
+                        include: {
+                            answers: true
+                        }
+                    }
+                }
+            }
+        },
+        orderBy: { created_at: 'desc' }
     })
 
     return (
-        <div className="animate-fade-in">
-            <h1 style={{ fontSize: '28px', marginBottom: '32px' }}>Soru Bankası ve Yarışma Yönetimi</h1>
-            
-            <div className="glass-panel" style={{ padding: '32px', marginBottom: '32px', textAlign: 'center' }}>
-                <p style={{ color: 'var(--text-muted)', marginBottom: '16px', fontSize: '18px' }}>Mevcut Soru Sayısı: <span style={{ color: 'var(--primary)', fontWeight: 'bold' }}>{questions.length}</span></p>
-                <div style={{ marginTop: '24px' }}>
-                    <button className="btn btn-primary" style={{ width: 'auto', display: 'inline-block' }}>Excel&apos;den Toplu Soru Yükle</button>
-                    <p style={{ marginTop: '12px', fontSize: '13px', color: 'var(--text-muted)' }}>* Sadece .xlsx uzantılı şablon dosyaları desteklenir.</p>
+        <div className="space-y-12 pb-20">
+            <div className="flex justify-between items-end">
+                <div className="space-y-2">
+                    <h1 className="text-3xl font-bold text-secondary">Soru Bankası Yönetimi</h1>
+                    <p className="text-gray-500">Excel üzerinden yeni quizler oluşturabilir ve mevcut olanları yönetebilirsiniz.</p>
                 </div>
             </div>
 
-            <div className="glass-panel" style={{ padding: '0', overflow: 'hidden' }}>
-                <table style={{ width: '100%', textAlign: 'left', borderCollapse: 'collapse' }}>
-                    <thead style={{ background: 'rgba(0,0,0,0.2)' }}>
-                        <tr>
-                            <th style={{ padding: '16px 20px', color: 'var(--text-muted)', fontWeight: 500 }}>Soru Metni</th>
-                            <th style={{ padding: '16px 20px', color: 'var(--text-muted)', fontWeight: 500 }}>Kategori</th>
-                            <th style={{ padding: '16px 20px', color: 'var(--text-muted)', fontWeight: 500 }}>Bağlı Sınav</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        {questions.map(q => (
-                            <tr key={q.id} style={{ borderBottom: '1px solid var(--glass-border)' }}>
-                                <td style={{ padding: '16px 20px', maxWidth: '400px', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>{q.text}</td>
-                                <td style={{ padding: '16px 20px' }}>
-                                    <span style={{ 
-                                        padding: '4px 10px', 
-                                        borderRadius: '12px', 
-                                        fontSize: '12px',
-                                        background: 'rgba(255,255,255,0.05)',
-                                        color: 'white'
-                                    }}>
-                                        {q.category}
-                                    </span>
-                                </td>
-                                <td style={{ padding: '16px 20px', color: 'var(--text-muted)' }}>{q.exam_id ? 'Spesifik Sınav' : 'Genel Havuz (Yarışma)'}</td>
-                            </tr>
-                        ))}
-                        {questions.length === 0 && (
-                            <tr>
-                                <td colSpan={3} style={{ padding: '32px', textAlign: 'center', color: 'var(--text-muted)' }}>Soru bankasında kayıt bulunamadı.</td>
-                            </tr>
-                        )}
-                    </tbody>
-                </table>
-            </div>
+            {/* Import Section */}
+            <section className="bg-white rounded-3xl p-8 border border-gray-100 shadow-sm">
+                <h2 className="text-xl font-bold text-secondary mb-6 flex items-center gap-2">
+                    <span className="w-8 h-8 rounded-lg bg-primary/10 text-primary flex items-center justify-center text-sm">📤</span>
+                    Yeni Quiz Yükle
+                </h2>
+                <ExcelImportButton />
+            </section>
+
+            {/* List Section */}
+            <section className="space-y-6">
+                <h2 className="text-xl font-bold text-secondary flex items-center gap-2">
+                    <span className="w-8 h-8 rounded-lg bg-secondary/10 text-secondary flex items-center justify-center text-sm">📋</span>
+                    Yüklü Quiz Grupları
+                </h2>
+                
+                {quizTrainings.length === 0 ? (
+                    <div className="bg-gray-50 rounded-3xl border border-dashed border-gray-200 p-20 text-center">
+                        <p className="text-gray-400">Henüz bir quiz yüklenmedi. Yukarıdaki alanı kullanarak ilk quizi oluşturun.</p>
+                    </div>
+                ) : (
+                    <QuizListAdmin quizGroups={quizTrainings} />
+                )}
+            </section>
         </div>
     )
 }

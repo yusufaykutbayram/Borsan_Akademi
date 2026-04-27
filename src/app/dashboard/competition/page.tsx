@@ -4,6 +4,7 @@ import Link from 'next/link';
 
 export default async function CompetitionDashboard() {
     const session = await auth();
+    if (!session?.user?.id) return null;
 
     // Check if user already competed today
     const today = new Date();
@@ -11,10 +12,25 @@ export default async function CompetitionDashboard() {
     
     const todaysSession = await prisma.competitionSession.findFirst({
         where: {
-            user_id: session!.user.id,
+            user_id: session.user.id,
             date: { gte: today }
         }
     });
+
+    // Get Top 10 users globally by XP
+    const leaderboard = await prisma.user.findMany({
+        orderBy: { xp_points: 'desc' },
+        take: 10,
+        select: { id: true, name: true, xp_points: true }
+    });
+
+    // Find current user's global rank
+    const allUsers = await prisma.user.findMany({
+        orderBy: { xp_points: 'desc' },
+        select: { id: true, xp_points: true }
+    });
+    const userRank = allUsers.findIndex(u => u.id === session.user.id) + 1;
+    const currentUserXp = allUsers.find(u => u.id === session.user.id)?.xp_points || 0;
 
     return (
         <div className="max-w-4xl mx-auto space-y-12 animate-fade-in pb-20">
@@ -34,10 +50,10 @@ export default async function CompetitionDashboard() {
                         <h3 className="text-xl font-bold text-secondary">Yarışma Kuralları</h3>
                         <ul className="space-y-4">
                             {[
-                                "20 farklı kategoriden seçilmiş sorular.",
+                                "Tüm quiz havuzundan 20 rastgele soru.",
                                 "Her soru için 20 saniye süre.",
-                                "Sekmeden ayrılmak diskalifiye sebebidir.",
-                                "Hızlı cevaplar ek bonus XP kazandırır."
+                                "Hızlı cevaplar ek bonus XP kazandırır.",
+                                "Günde sadece 1 kez XP kazanılabilir."
                             ].map((rule, i) => (
                                 <li key={i} className="flex items-start gap-3 text-gray-500 text-sm">
                                     <span className="text-primary font-bold">{i + 1}.</span>
@@ -52,7 +68,7 @@ export default async function CompetitionDashboard() {
                             <div className="text-center space-y-2">
                                 <p className="text-xs font-bold text-gray-400 uppercase tracking-widest">Bugünkü Puanınız</p>
                                 <p className="text-5xl font-black text-primary">{todaysSession.score}</p>
-                                <p className="text-sm text-gray-500 font-medium">Yarın tekrar bekliyoruz!</p>
+                                <p className="text-sm text-gray-500 font-medium mt-2">Güncel Sıran: <span className="text-secondary font-bold">#{userRank}</span></p>
                             </div>
                         ) : (
                             <div className="text-center space-y-6 w-full">
@@ -68,32 +84,55 @@ export default async function CompetitionDashboard() {
 
             {/* Ranking Section */}
             <div className="space-y-6">
-                <h3 className="text-2xl font-bold text-secondary px-2">Günlük Yarışma Sıralaması</h3>
+                <div className="flex justify-between items-end px-2">
+                    <h3 className="text-2xl font-bold text-secondary">Genel Liderlik Tablosu</h3>
+                    <p className="text-xs text-gray-400 font-bold uppercase tracking-widest">Top 10 Oyuncu</p>
+                </div>
                 <div className="bg-white rounded-3xl shadow-soft border border-gray-100 overflow-hidden">
                     <table className="w-full text-left border-collapse">
                         <thead>
                             <tr className="bg-surface border-b border-gray-100">
                                 <th className="p-6 text-[10px] font-bold text-gray-400 uppercase tracking-widest">Sıra</th>
                                 <th className="p-6 text-[10px] font-bold text-gray-400 uppercase tracking-widest">Kullanıcı</th>
-                                <th className="p-6 text-right text-[10px] font-bold text-gray-400 uppercase tracking-widest">Puan</th>
+                                <th className="p-6 text-right text-[10px] font-bold text-gray-400 uppercase tracking-widest">Toplam XP</th>
                             </tr>
                         </thead>
                         <tbody className="divide-y divide-gray-50">
-                            <tr className="hover:bg-gray-50 transition-colors">
-                                <td className="p-6 font-black text-2xl text-yellow-500">01</td>
-                                <td className="p-6 font-bold text-secondary">Ahmet Yılmaz</td>
-                                <td className="p-6 text-right font-black text-primary text-xl">450</td>
-                            </tr>
-                            <tr className="hover:bg-gray-50 transition-colors">
-                                <td className="p-6 font-black text-2xl text-gray-400">02</td>
-                                <td className="p-6 font-bold text-secondary">Ayşe Kaya</td>
-                                <td className="p-6 text-right font-black text-secondary text-xl">420</td>
-                            </tr>
-                            <tr className="bg-primary/5">
-                                <td className="p-6 font-black text-2xl text-primary">04</td>
-                                <td className="p-6 font-bold text-secondary">{session?.user.name} (Siz)</td>
-                                <td className="p-6 text-right font-black text-primary text-xl">{todaysSession ? todaysSession.score : '-'}</td>
-                            </tr>
+                            {leaderboard.map((user, idx) => (
+                                <tr key={user.id} className={`hover:bg-gray-50 transition-colors ${user.id === session.user.id ? 'bg-primary/[0.02]' : ''}`}>
+                                    <td className={`p-6 font-black text-2xl ${
+                                        idx === 0 ? 'text-yellow-500' : 
+                                        idx === 1 ? 'text-gray-400' : 
+                                        idx === 2 ? 'text-orange-400' : 'text-gray-200'
+                                    }`}>
+                                        {idx < 9 ? `0${idx + 1}` : idx + 1}
+                                    </td>
+                                    <td className="p-6">
+                                        <div className="font-bold text-secondary flex items-center gap-2">
+                                            {user.name}
+                                            {user.id === session.user.id && <span className="bg-primary/10 text-primary text-[10px] px-2 py-0.5 rounded-full">Siz</span>}
+                                        </div>
+                                    </td>
+                                    <td className="p-6 text-right font-black text-secondary text-xl">
+                                        {user.xp_points.toLocaleString()}
+                                    </td>
+                                </tr>
+                            ))}
+                            
+                            {/* Current user's rank if not in Top 10 */}
+                            {userRank > 10 && (
+                                <tr className="bg-primary/5">
+                                    <td className="p-6 font-black text-2xl text-primary">
+                                        {userRank}
+                                    </td>
+                                    <td className="p-6 font-bold text-secondary">
+                                        {session.user.name} (Siz)
+                                    </td>
+                                    <td className="p-6 text-right font-black text-primary text-xl">
+                                        {currentUserXp.toLocaleString()}
+                                    </td>
+                                </tr>
+                            )}
                         </tbody>
                     </table>
                 </div>

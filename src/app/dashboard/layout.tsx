@@ -62,26 +62,26 @@ export default async function DashboardLayout({ children }: { children: React.Re
             </main>
 
             {/* Mobile Navigation (Bottom) */}
-            <nav className="md:hidden fixed bottom-0 left-0 right-0 bg-white border-t border-gray-100 px-6 py-4 flex justify-around items-center z-50">
+            <nav className="md:hidden fixed bottom-0 left-0 right-0 bg-white border-t border-gray-100 px-4 py-4 flex justify-around items-center z-50">
                 <Link href="/dashboard" className="text-primary flex flex-col items-center">
                     <span className="text-xl">🏠</span>
-                    <span className="text-[10px] font-bold mt-1">Ana Sayfa</span>
+                    <span className="text-[9px] font-bold mt-1">Ana Sayfa</span>
                 </Link>
                 <Link href="/dashboard/trainings" className="text-gray-400 flex flex-col items-center">
                     <span className="text-xl">📚</span>
-                    <span className="text-[10px] font-bold mt-1">Eğitimler</span>
+                    <span className="text-[9px] font-bold mt-1">Eğitimler</span>
                 </Link>
-                <Link href="/dashboard/ai-chat" className="text-gray-400 flex flex-col items-center">
-                    <span className="text-xl">🤖</span>
-                    <span className="text-[10px] font-bold mt-1">Asistan</span>
+                <Link href="/dashboard/quizzes" className="text-gray-400 flex flex-col items-center">
+                    <span className="text-xl">🎓</span>
+                    <span className="text-[9px] font-bold mt-1">Quizler</span>
                 </Link>
                 <Link href="/dashboard/competition" className="text-gray-400 flex flex-col items-center">
                     <span className="text-xl">🏆</span>
-                    <span className="text-[10px] font-bold mt-1">Yarışma</span>
+                    <span className="text-[9px] font-bold mt-1">Yarışma</span>
                 </Link>
                 <Link href="/dashboard/profile" className="text-gray-400 flex flex-col items-center">
                     <span className="text-xl">👤</span>
-                    <span className="text-[10px] font-bold mt-1">Profil</span>
+                    <span className="text-[9px] font-bold mt-1">Profil</span>
                 </Link>
             </nav>
 

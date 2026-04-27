@@ -1,35 +1,50 @@
 import { auth } from "@/auth";
 import { prisma } from "@/lib/prisma";
 import { redirect } from "next/navigation";
-import { QuizClient } from "./quiz-client";
+import QuizClient from "./quiz-client";
 
-export default async function QuizPage() {
+export const dynamic = 'force-dynamic'
+
+export default async function CompetitionPlayPage() {
     const session = await auth();
-    const today = new Date();
-    today.setHours(0,0,0,0);
-    
-    // Prevent retakes
-    const todaysSession = await prisma.competitionSession.findFirst({
-        where: { user_id: session!.user.id, date: { gte: today } }
+    if (!session) redirect("/login");
+
+    // 1. Fetch ALL questions from ALL exams (quizzes)
+    // We include answers as well
+    const allQuestions = await prisma.question.findMany({
+        include: {
+            answers: true
+        }
     });
 
-    if (todaysSession) {
-        redirect("/dashboard/competition");
+    if (allQuestions.length === 0) {
+        return (
+            <div className="flex flex-col items-center justify-center min-h-[60vh] text-center p-8 glass-card">
+                <span className="text-6xl mb-6">🏜️</span>
+                <h1 className="text-2xl font-bold text-secondary mb-2">Soru Bulunamadı</h1>
+                <p className="text-gray-500">Yarışma başlatabilmek için önce sisteme en az bir quiz yüklemelisiniz.</p>
+            </div>
+        );
     }
 
-    // Since SQLite RANDOM() is not natively supported directly via Prisma typical syntax simply,
-    // we fetch and shuffle in memory.
-    const questions = await prisma.question.findMany({
-        where: { exam_id: null }, // Only general pool
-        include: { answers: true }
-    });
-
-    // eslint-disable-next-line react-hooks/purity
-    const shuffled = questions.sort(() => 0.5 - Math.random()).slice(0, 20);
+    // 2. Shuffle and pick 20 random unique questions
+    // If there are less than 20 questions, take all of them
+    const shuffled = allQuestions.sort(() => 0.5 - Math.random());
+    const selectedQuestions = shuffled.slice(0, 20);
 
     return (
-        <div style={{ padding: '0' }}>
-            <QuizClient questions={shuffled} />
+        <div className="py-8">
+            <div className="max-w-3xl mx-auto mb-8 flex justify-between items-center px-4">
+                <div className="space-y-1">
+                    <span className="text-xs font-bold text-primary uppercase tracking-widest">Günlük Yarışma</span>
+                    <h1 className="text-2xl font-bold text-secondary">Büyük Mücadele</h1>
+                </div>
+                <div className="bg-primary/10 text-primary px-4 py-2 rounded-2xl text-sm font-bold border border-primary/20">
+                    {selectedQuestions.length} Soru Aktif
+                </div>
+            </div>
+            
+            <QuizClient questions={selectedQuestions} />
         </div>
-    )
+    );
 }
