@@ -6,11 +6,17 @@ import path from 'path';
 // Bilgi dosyalarını oku
 const getKnowledgeBase = () => {
     try {
-        const philosophyPath = path.join(process.cwd(), 'industrial_enlightenment_philosophy.md');
-        const sunumPath = path.join(process.cwd(), 'BORSAN_AKADEMI_SUNUM.html');
+        const philosophyPath = path.join(process.cwd(), 'public', 'data', 'industrial_enlightenment_philosophy.md');
+        const sunumPath = path.join(process.cwd(), 'public', 'data', 'BORSAN_AKADEMI_SUNUM.html');
+        
+        console.log("Checking paths:", { philosophyPath, sunumPath });
         
         const philosophy = fs.existsSync(philosophyPath) ? fs.readFileSync(philosophyPath, 'utf8') : '';
         const sunum = fs.existsSync(sunumPath) ? fs.readFileSync(sunumPath, 'utf8') : '';
+        
+        if (!philosophy && !sunum) {
+            console.warn("Knowledge base files not found or empty.");
+        }
         
         return `
 KNOWLEDGE BASE (BORSAN AKADEMİ ÖZEL BİLGİLERİ):
@@ -83,12 +89,26 @@ export async function POST(req: Request) {
         const response = await result.response;
         const text = response.text();
 
+        if (!text) {
+            throw new Error("Yapay zekadan boş cevap döndü.");
+        }
+
         return NextResponse.json({ text });
     } catch (error: any) {
         console.error("Chat API Error:", error);
+        
+        // Daha detaylı hata mesajı döndür
+        let errorMessage = "Mesaj gönderilirken bir hata oluştu.";
+        if (error.message?.includes("API key")) {
+            errorMessage = "API anahtarı geçersiz veya yetkisiz.";
+        } else if (error.message?.includes("quota")) {
+            errorMessage = "API kullanım kotası dolmuş olabilir.";
+        }
+
         return NextResponse.json({ 
-            error: "Mesaj gönderilirken bir hata oluştu.",
-            detail: error.message 
+            error: errorMessage,
+            detail: error.message,
+            stack: process.env.NODE_ENV === 'development' ? error.stack : undefined
         }, { status: 500 });
     }
 }
