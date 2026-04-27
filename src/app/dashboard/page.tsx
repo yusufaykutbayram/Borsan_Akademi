@@ -52,46 +52,40 @@ export default async function DashboardPage() {
             </section>
 
             {/* Stats Dashboard */}
-            <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-                {/* Profile & XP Card (Spans 2 columns on large screens) */}
-                <div className="lg:col-span-2 bg-white rounded-3xl shadow-soft border border-gray-100 overflow-hidden flex flex-col">
-                    {/* Top Section: Level and Points side-by-side or tight stack */}
-                    <div className="p-5 sm:p-8 flex flex-col sm:flex-row sm:items-center justify-between gap-6 bg-gradient-to-br from-white to-gray-50/50">
-                        <div className="flex items-center gap-4">
-                            <div>
-                                <p className="text-gray-400 text-[10px] font-bold uppercase tracking-[0.2em] mb-0.5">Mevcut Seviye</p>
-                                <h3 className="text-xl sm:text-3xl font-bold text-secondary leading-tight">Gelişim Uzmanı</h3>
-                                <div className="flex items-center gap-1.5 mt-0.5">
-                                    <span className="w-1.5 h-1.5 bg-green-500 rounded-full animate-pulse"></span>
-                                    <span className="text-gray-400 text-[10px] font-medium uppercase tracking-wider">Kurumsal Akademi Üyesi</span>
-                                </div>
-                            </div>
-                        </div>
-
-                        <div className="flex items-center gap-6 sm:pl-8 sm:border-l border-gray-100 pt-4 sm:pt-0 border-t sm:border-t-0">
-                            <div>
-                                <p className="text-gray-400 text-[10px] font-bold uppercase tracking-[0.2em] mb-0.5">Toplam Puan</p>
-                                <div className="flex items-baseline gap-1">
-                                    <span className="text-4xl sm:text-5xl font-black text-secondary tracking-tighter">{user?.xp_points}</span>
-                                    <span className="text-primary font-bold text-sm">XP</span>
-                                </div>
-                            </div>
-                            <div className="flex-1 sm:flex-none text-right">
-                                <div className="inline-block px-3 py-1 bg-primary/5 rounded-full border border-primary/10">
-                                    <p className="text-secondary text-[10px] font-bold uppercase tracking-widest">Genel Sıralama: <span className="text-primary">#12</span></p>
-                                </div>
-                            </div>
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                {/* Current Level Card */}
+                <div className="bg-white p-5 sm:p-8 rounded-3xl shadow-soft border border-gray-100 flex flex-col justify-between min-h-[160px] sm:min-h-[200px]">
+                    <div>
+                        <p className="text-gray-400 text-[10px] font-bold uppercase tracking-[0.2em] mb-1">Mevcut Seviye</p>
+                        <h3 className="text-xl sm:text-2xl font-bold text-secondary">Gelişim Uzmanı</h3>
+                        <div className="flex items-center gap-1.5 mt-1">
+                            <span className="w-1.5 h-1.5 bg-green-500 rounded-full animate-pulse"></span>
+                            <span className="text-gray-400 text-[10px] font-medium uppercase tracking-wider">Kurumsal Akademi Üyesi</span>
                         </div>
                     </div>
-
-                    {/* Bottom Section: Level Progress Bar */}
-                    <div className="px-5 py-4 sm:px-8 sm:py-6 bg-gray-50/30 border-t border-gray-50">
+                    <div className="mt-6 sm:mt-0">
                         <div className="flex justify-between items-center mb-2.5">
                             <span className="text-[10px] font-bold text-secondary uppercase tracking-wider">Seviye İlerlemesi</span>
-                            <span className="text-[10px] font-bold text-primary bg-white px-2 py-0.5 rounded border border-gray-100 shadow-sm">240 XP kaldı</span>
+                            <span className="text-[10px] font-bold text-primary">240 XP kaldı</span>
                         </div>
-                        <div className="w-full h-2.5 bg-gray-200/50 rounded-full overflow-hidden p-[2px]">
-                            <div className="h-full bg-gradient-to-r from-primary to-primary-dark rounded-full shadow-sm transition-all duration-1000" style={{ width: '70%' }}></div>
+                        <div className="w-full h-2 bg-gray-100 rounded-full overflow-hidden">
+                            <div className="h-full bg-gradient-to-r from-primary to-primary-dark rounded-full" style={{ width: '70%' }}></div>
+                        </div>
+                    </div>
+                </div>
+
+                {/* Total Points Card */}
+                <div className="bg-white p-5 sm:p-8 rounded-3xl shadow-soft border border-gray-100 flex flex-col justify-between min-h-[160px] sm:min-h-[200px]">
+                    <div>
+                        <p className="text-gray-400 text-[10px] font-bold uppercase tracking-[0.2em] mb-1">Toplam Puan</p>
+                        <div className="flex items-baseline gap-1">
+                            <span className="text-5xl font-black text-secondary tracking-tighter">{user?.xp_points}</span>
+                            <span className="text-primary font-bold text-sm">XP</span>
+                        </div>
+                    </div>
+                    <div className="mt-6 sm:mt-0">
+                        <div className="inline-block px-3 py-1 bg-primary/5 rounded-full border border-primary/10">
+                            <p className="text-secondary text-[10px] font-bold uppercase tracking-widest">Genel Sıralama: <span className="text-primary">#12</span></p>
                         </div>
                     </div>
                 </div>
@@ -121,7 +115,7 @@ export default async function DashboardPage() {
                 </div>
 
                 {/* Training Progress Card (1 column) */}
-                <div className="bg-white p-5 sm:p-8 rounded-3xl shadow-soft border border-gray-100 flex flex-col justify-between relative overflow-hidden group">
+                <div className="bg-white p-5 sm:p-8 rounded-3xl shadow-soft border border-gray-100 flex flex-col justify-between min-h-[160px] sm:min-h-[200px] relative overflow-hidden group">
                     <div className="flex justify-between items-start mb-6">
                         <div>
                             <p className="text-gray-400 text-[10px] font-bold uppercase tracking-[0.2em] mb-1">Eğitim İlerlemesi</p>
