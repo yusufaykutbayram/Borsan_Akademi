@@ -57,7 +57,7 @@ export default async function DashboardPage() {
                 <div className="bg-white p-5 sm:p-8 rounded-3xl shadow-soft border border-gray-100 flex flex-col justify-between min-h-[160px] sm:min-h-[200px]">
                     <div>
                         <p className="text-gray-400 text-[10px] font-bold uppercase tracking-[0.2em] mb-1">Mevcut Seviye</p>
-                        <h3 className="text-xl sm:text-2xl font-bold text-secondary">Gelişim Uzmanı</h3>
+                        <h3 className="text-xl sm:text-2xl font-bold text-secondary">{user?.position || "Gelişim Uzmanı"}</h3>
                         <div className="flex items-center gap-1.5 mt-1">
                             <span className="w-1.5 h-1.5 bg-green-500 rounded-full animate-pulse"></span>
                             <span className="text-gray-400 text-[10px] font-medium uppercase tracking-wider">Kurumsal Akademi Üyesi</span>

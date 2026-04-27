@@ -20,7 +20,22 @@ export default async function ProfilePage() {
                 </div>
                 <div className="mt-8 space-y-2">
                     <h1 className="text-3xl font-black text-secondary tracking-tight">{user?.name}</h1>
-                    <p className="text-gray-400 font-medium">{user?.tc_number} • Borsan Akademi Çalışanı</p>
+                    <p className="text-gray-400 font-medium">{user?.position || "Borsan Akademi Çalışanı"}</p>
+                    <div className="flex flex-wrap justify-center gap-x-4 gap-y-1 text-xs text-gray-400 mt-2">
+                        {user?.factory && <span>{user.factory}</span>}
+                        {user?.department && (
+                            <>
+                                <span className="hidden sm:inline opacity-30">•</span>
+                                <span>{user.department}</span>
+                            </>
+                        )}
+                        {user?.start_date && (
+                            <>
+                                <span className="hidden sm:inline opacity-30">•</span>
+                                <span>Giriş: {new Date(user.start_date).toLocaleDateString('tr-TR')}</span>
+                            </>
+                        )}
+                    </div>
                 </div>
                 <div className="mt-8 flex gap-3">
                     <div className="px-8 py-3 bg-surface rounded-2xl border border-gray-100">

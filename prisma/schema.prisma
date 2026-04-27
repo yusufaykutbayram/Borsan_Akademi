@@ -14,7 +14,12 @@ datasource db {
 model User {
   id               String   @id @default(uuid())
   name             String
-  tc_number        String   @unique
+  tc_number        String?  @unique
+  sicil_no         String?  @unique
+  start_date       DateTime?
+  department       String?
+  factory          String?
+  position         String?
   password_hash    String
   role             String   @default("EMPLOYEE") // "ADMIN" or "EMPLOYEE"
   language         String   @default("tr")
@@ -23,11 +28,12 @@ model User {
   created_at       DateTime @default(now())
 
   // Relations
-  training_progress   TrainingProgress[]
-  exam_results        ExamResult[]
-  certificates        Certificate[]
-  user_badges         UserBadge[]
-  competitions        CompetitionSession[]
+  training_progress     TrainingProgress[]
+  exam_results          ExamResult[]
+  certificates           Certificate[]
+  user_badges            UserBadge[]
+  competitions           CompetitionSession[]
+  performance_evals     PerformanceEvaluation[]
 }
 
 model Training {
@@ -151,5 +157,29 @@ model Announcement {
   content    String
   type       String   @default("INFO") // INFO, NEW_TRAINING, SYSTEM
   created_at DateTime @default(now())
+}
+
+model PerformanceEvaluation {
+  id          String   @id @default(uuid())
+  user_id     String
+  period      String   // e.g., "2024-Q1", "2024-Q2"
+  final_grade String   // A, B, C, D
+  total_score Float
+  evaluated_at DateTime @default(now())
+
+  user    User               @relation(fields: [user_id], references: [id], onDelete: Cascade)
+  metrics PerformanceMetric[]
+
+  @@unique([user_id, period])
+}
+
+model PerformanceMetric {
+  id              String  @id @default(uuid())
+  evaluation_id   String
+  title           String  // e.g., "İş Kalitesi", "Disiplin"
+  score           Float
+  max_score       Float   @default(100)
+  
+  evaluation PerformanceEvaluation @relation(fields: [evaluation_id], references: [id], onDelete: Cascade)
 }
 

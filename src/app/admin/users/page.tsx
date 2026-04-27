@@ -1,5 +1,6 @@
 import { prisma } from "@/lib/prisma"
 import { AddUserForm } from "./add-user-form"
+import { PersonnelImportButton } from "./personnel-import-button"
 
 // Dynamically rendering
 export const dynamic = 'force-dynamic'
@@ -13,24 +14,34 @@ export default async function UsersPage() {
         <div className="animate-fade-in">
             <h1 style={{ fontSize: '28px', marginBottom: '32px' }}>Kullanıcı Yönetimi</h1>
             
-            <AddUserForm />
+            <div className="flex flex-wrap gap-4 items-start mb-8">
+                <PersonnelImportButton />
+                <div style={{ flex: 1 }}>
+                     <AddUserForm />
+                </div>
+            </div>
 
             <div className="glass-panel" style={{ padding: '0', overflow: 'hidden' }}>
                 <table style={{ width: '100%', textAlign: 'left', borderCollapse: 'collapse' }}>
                     <thead style={{ background: 'rgba(0,0,0,0.2)' }}>
                         <tr>
+                            <th style={{ padding: '16px 20px', color: 'var(--text-muted)', fontWeight: 500 }}>Sicil No</th>
                             <th style={{ padding: '16px 20px', color: 'var(--text-muted)', fontWeight: 500 }}>Ad Soyad</th>
-                            <th style={{ padding: '16px 20px', color: 'var(--text-muted)', fontWeight: 500 }}>TC Kimlik</th>
+                            <th style={{ padding: '16px 20px', color: 'var(--text-muted)', fontWeight: 500 }}>Departman / Fabrika</th>
                             <th style={{ padding: '16px 20px', color: 'var(--text-muted)', fontWeight: 500 }}>Rol</th>
+                            <th style={{ padding: '16px 20px', color: 'var(--text-muted)', fontWeight: 500 }}>Pozisyon</th>
                             <th style={{ padding: '16px 20px', color: 'var(--text-muted)', fontWeight: 500 }}>XP</th>
-                            <th style={{ padding: '16px 20px', color: 'var(--text-muted)', fontWeight: 500 }}>Kayıt Tarihi</th>
                         </tr>
                     </thead>
                     <tbody>
                         {users.map(u => (
                             <tr key={u.id} style={{ borderBottom: '1px solid var(--glass-border)' }}>
+                                <td style={{ padding: '16px 20px', fontWeight: 'bold', color: 'var(--primary)' }}>{u.sicil_no || '-'}</td>
                                 <td style={{ padding: '16px 20px' }}>{u.name}</td>
-                                <td style={{ padding: '16px 20px' }}>{u.tc_number}</td>
+                                <td style={{ padding: '16px 20px' }}>
+                                    <div style={{ fontSize: '14px' }}>{u.department || '-'}</div>
+                                    <div style={{ fontSize: '11px', opacity: 0.6 }}>{u.factory || '-'}</div>
+                                </td>
                                 <td style={{ padding: '16px 20px' }}>
                                     <span style={{ 
                                         padding: '4px 10px', 
@@ -43,13 +54,13 @@ export default async function UsersPage() {
                                         {u.role === 'ADMIN' ? 'Yönetici' : 'Çalışan'}
                                     </span>
                                 </td>
+                                <td style={{ padding: '16px 20px', fontSize: '13px' }}>{u.position || '-'}</td>
                                 <td style={{ padding: '16px 20px' }}>{u.xp_points} XP</td>
-                                <td style={{ padding: '16px 20px', color: 'var(--text-muted)' }}>{u.created_at.toLocaleDateString('tr-TR')}</td>
                             </tr>
                         ))}
                         {users.length === 0 && (
                             <tr>
-                                <td colSpan={5} style={{ padding: '32px', textAlign: 'center', color: 'var(--text-muted)' }}>Kayıtlı kullanıcı bulunamadı.</td>
+                                <td colSpan={6} style={{ padding: '32px', textAlign: 'center', color: 'var(--text-muted)' }}>Kayıtlı kullanıcı bulunamadı.</td>
                             </tr>
                         )}
                     </tbody>
