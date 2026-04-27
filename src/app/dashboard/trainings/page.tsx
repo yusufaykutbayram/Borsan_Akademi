@@ -7,10 +7,22 @@ export const dynamic = 'force-dynamic'
 export default async function TrainingsPage() {
     const session = await auth()
 
-    const progresses = await prisma.trainingProgress.findMany({
-        where: { user_id: session!.user.id },
-        include: { training: true },
-        orderBy: { updated_at: 'desc' }
+    const allTrainings = await prisma.training.findMany({
+        orderBy: { created_at: 'desc' }
+    })
+
+    const userProgress = await prisma.trainingProgress.findMany({
+        where: { user_id: session!.user.id }
+    })
+
+    // Merge all trainings with user progress
+    const trainingsWithProgress = allTrainings.map(t => {
+        const p = userProgress.find(up => up.training_id === t.id)
+        return {
+            training: t,
+            progress_percentage: p?.progress_percentage || 0,
+            status: p?.status || 'NOT_STARTED'
+        }
     })
 
     const categories = [
@@ -27,15 +39,15 @@ export default async function TrainingsPage() {
                 <p className="text-gray-500">Kategorilere tıklayarak içerikleri görüntüleyebilirsiniz.</p>
             </div>
 
-            {progresses.length === 0 ? (
+            {trainingsWithProgress.length === 0 ? (
                 <div className="bg-white rounded-3xl border border-dashed border-gray-200 p-20 text-center">
                     <span className="text-6xl block mb-6 grayscale opacity-20">🎓</span>
-                    <p className="text-gray-400 font-medium">Henüz size atanmış bir eğitim bulunmuyor.</p>
+                    <p className="text-gray-400 font-medium">Henüz sisteme eklenmiş bir eğitim bulunmuyor.</p>
                 </div>
             ) : (
                 <div className="space-y-6">
                     {categories.map(cat => {
-                        const catProgresses = progresses.filter(p => p.training.category === cat.id)
+                        const catProgresses = trainingsWithProgress.filter(p => p.training.category === cat.id)
                         if (catProgresses.length === 0) return null
 
                         return (
@@ -48,10 +60,10 @@ export default async function TrainingsPage() {
                     })}
                     
                     {/* Uncategorized or 'DIĞER' */}
-                    {progresses.filter(p => !categories.find(c => c.id === p.training.category)).length > 0 && (
+                    {trainingsWithProgress.filter(p => !categories.find(c => c.id === p.training.category)).length > 0 && (
                          <TrainingCategorySection 
                             cat={{ id: 'OTHER', label: 'Diğer Eğitimler', emoji: '📚' }} 
-                            catProgresses={progresses.filter(p => !categories.find(c => c.id === p.training.category))} 
+                            catProgresses={trainingsWithProgress.filter(p => !categories.find(c => c.id === p.training.category))} 
                          />
                     )}
                 </div>

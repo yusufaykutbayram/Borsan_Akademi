@@ -9,11 +9,25 @@ export default async function DashboardPage() {
         include: { user_badges: { include: { badge: true } } }
     });
 
-    const trainings = await prisma.trainingProgress.findMany({
+    const allTrainings = await prisma.training.findMany({
+        take: 10,
+        orderBy: { created_at: 'desc' }
+    });
+
+    const userProgress = await prisma.trainingProgress.findMany({
         where: { user_id: session!.user.id },
-        include: { training: true },
-        take: 3
-    })
+        include: { training: true }
+    });
+
+    // Merge trainings with progress
+    const trainings = allTrainings.map(t => {
+        const progress = userProgress.find(p => p.training_id === t.id);
+        return {
+            ...t,
+            progress_percentage: progress?.progress_percentage || 0,
+            status: progress?.status || 'NOT_STARTED'
+        };
+    }).slice(0, 3);
 
     const topUsers = await prisma.user.findMany({
         where: { role: 'EMPLOYEE' },
@@ -149,16 +163,16 @@ export default async function DashboardPage() {
                                 <div className="flex justify-between items-start mb-4">
                                     <div>
                                         <span className="text-[10px] font-bold text-primary uppercase tracking-widest mb-1 block">
-                                            {t.training.type}
+                                            {t.type}
                                         </span>
-                                        <h3 className="font-bold text-secondary text-lg group-hover:text-primary transition-colors">{t.training.title}</h3>
+                                        <h3 className="font-bold text-secondary text-lg group-hover:text-primary transition-colors">{t.title}</h3>
                                     </div>
                                     <div className="w-12 h-12 rounded-full border-2 border-gray-100 flex items-center justify-center text-xs font-bold text-secondary">
                                         {t.progress_percentage}%
                                     </div>
                                 </div>
-                                <Link href={`/dashboard/training/${t.training.id}`} className="inline-flex items-center text-sm font-semibold text-secondary group-hover:translate-x-1 transition-transform">
-                                    Devam Et <span className="ml-2">→</span>
+                                <Link href={`/dashboard/training/${t.id}`} className="inline-flex items-center text-sm font-semibold text-secondary group-hover:translate-x-1 transition-transform">
+                                    {t.progress_percentage > 0 ? 'Devam Et' : 'Eğitime Başla'} <span className="ml-2">→</span>
                                 </Link>
                             </div>
                         ))}
