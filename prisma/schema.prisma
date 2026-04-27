@@ -34,6 +34,7 @@ model User {
   user_badges            UserBadge[]
   competitions           CompetitionSession[]
   performance_evals     PerformanceEvaluation[]
+  machine_licenses      MachineLicense[]
 }
 
 model Training {
@@ -55,6 +56,7 @@ model TrainingProgress {
   training_id         String
   status              String   @default("IN_PROGRESS") // IN_PROGRESS, COMPLETED
   progress_percentage Int      @default(0)
+  is_mandatory        Boolean  @default(false)
   updated_at          DateTime @updatedAt
   
   user     User     @relation(fields: [user_id], references: [id], onDelete: Cascade)
@@ -181,5 +183,17 @@ model PerformanceMetric {
   max_score       Float   @default(100)
   
   evaluation PerformanceEvaluation @relation(fields: [evaluation_id], references: [id], onDelete: Cascade)
+}model MachineLicense {
+  id              String   @id @default(uuid())
+  user_id         String
+  line_name       String   // e.g., "ZA AKTARMA"
+  score           Int      // 0-4
+  level           String   // Başlangıç, Temel, İyi, Uzman
+  issued_at       DateTime @default(now())
+  is_valid        Boolean
+
+  user User @relation(fields: [user_id], references: [id], onDelete: Cascade)
+
+  @@unique([user_id, line_name])
 }
 

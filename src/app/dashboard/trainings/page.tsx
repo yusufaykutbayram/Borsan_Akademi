@@ -21,7 +21,8 @@ export default async function TrainingsPage() {
         return {
             training: t,
             progress_percentage: p?.progress_percentage || 0,
-            status: p?.status || 'NOT_STARTED'
+            status: p?.status || 'NOT_STARTED',
+            is_mandatory: p?.is_mandatory || false
         }
     })
 
@@ -46,8 +47,19 @@ export default async function TrainingsPage() {
                 </div>
             ) : (
                 <div className="space-y-6">
+                    {/* Zorunlu Eğitimler Section */}
+                    {trainingsWithProgress.filter(p => p.is_mandatory && p.status !== 'COMPLETED').length > 0 && (
+                        <TrainingCategorySection 
+                            cat={{ id: 'MANDATORY', label: 'Zorunlu Eğitimler', emoji: '🚨' }} 
+                            catProgresses={trainingsWithProgress.filter(p => p.is_mandatory && p.status !== 'COMPLETED').map(p => ({
+                                ...p,
+                                is_mandatory: true
+                            }))} 
+                        />
+                    )}
+
                     {categories.map(cat => {
-                        const catProgresses = trainingsWithProgress.filter(p => p.training.category === cat.id)
+                        const catProgresses = trainingsWithProgress.filter(p => p.training.category === cat.id && !p.is_mandatory)
                         if (catProgresses.length === 0) return null
 
                         return (
@@ -60,10 +72,10 @@ export default async function TrainingsPage() {
                     })}
                     
                     {/* Uncategorized or 'DIĞER' */}
-                    {trainingsWithProgress.filter(p => !categories.find(c => c.id === p.training.category)).length > 0 && (
+                    {trainingsWithProgress.filter(p => !categories.find(c => c.id === p.training.category) && !p.is_mandatory).length > 0 && (
                          <TrainingCategorySection 
                             cat={{ id: 'OTHER', label: 'Diğer Eğitimler', emoji: '📚' }} 
-                            catProgresses={trainingsWithProgress.filter(p => !categories.find(c => c.id === p.training.category))} 
+                            catProgresses={trainingsWithProgress.filter(p => !categories.find(c => c.id === p.training.category) && !p.is_mandatory)} 
                          />
                     )}
                 </div>

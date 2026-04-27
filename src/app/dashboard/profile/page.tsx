@@ -1,6 +1,8 @@
 import { auth } from "@/auth";
 import { prisma } from "@/lib/prisma";
 import { PerformanceCard } from "./performance-card";
+import { MandatoryTrainingsAccordion } from "./mandatory-trainings-accordion";
+import { MachineLicensesAccordion } from "./machine-licenses-accordion";
 
 export default async function ProfilePage() {
     const session = await auth();
@@ -12,9 +14,21 @@ export default async function ProfilePage() {
             performance_evals: {
                 include: { metrics: true },
                 orderBy: { evaluated_at: 'desc' }
+            },
+            training_progress: {
+                where: { is_mandatory: true },
+                include: { training: true },
+                orderBy: { updated_at: 'desc' }
+            },
+            machine_licenses: {
+                orderBy: { score: 'desc' }
             }
         }
     });
+
+    const mandatoryTrainings = user?.training_progress || [];
+    const machineLicenses = user?.machine_licenses || [];
+
 
     return (
         <div className="max-w-4xl mx-auto space-y-12 animate-fade-in pb-20">
@@ -56,6 +70,20 @@ export default async function ProfilePage() {
                     </div>
                 </div>
             </div>
+
+            {/* Mandatory Trainings Accordion */}
+            <MandatoryTrainingsAccordion trainings={mandatoryTrainings} />
+
+            {/* Machine Licenses Accordion */}
+            <MachineLicensesAccordion 
+                licenses={machineLicenses} 
+                user={{
+                    name: user?.name || "",
+                    sicil_no: user?.sicil_no,
+                    department: user?.department,
+                    position: user?.position
+                }} 
+            />
 
             {/* Performance Evaluations Section */}
             <section className="space-y-6">

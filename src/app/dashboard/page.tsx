@@ -16,18 +16,32 @@ export default async function DashboardPage() {
 
     const userProgress = await prisma.trainingProgress.findMany({
         where: { user_id: session!.user.id },
-        include: { training: true }
+        include: { training: true },
+        orderBy: { is_mandatory: 'desc' }
     });
 
-    // Merge trainings with progress
-    const trainings = allTrainings.map(t => {
-        const progress = userProgress.find(p => p.training_id === t.id);
-        return {
-            ...t,
-            progress_percentage: progress?.progress_percentage || 0,
-            status: progress?.status || 'NOT_STARTED'
-        };
-    }).slice(0, 3);
+    const mandatoryTrainings = userProgress
+        .filter(p => p.is_mandatory && p.status !== 'COMPLETED')
+        .map(p => ({
+            ...p.training,
+            progress_percentage: p.progress_percentage,
+            status: p.status,
+            is_mandatory: true
+        }));
+
+    const otherTrainings = allTrainings
+        .filter(t => !mandatoryTrainings.find(m => m.id === t.id))
+        .map(t => {
+            const progress = userProgress.find(p => p.training_id === t.id);
+            return {
+                ...t,
+                progress_percentage: progress?.progress_percentage || 0,
+                status: progress?.status || 'NOT_STARTED',
+                is_mandatory: false
+            };
+        });
+
+    const displayTrainings = [...mandatoryTrainings, ...otherTrainings].slice(0, 3);
 
     const totalTrainingsCount = await prisma.training.count();
     const completedTrainingsCount = userProgress.filter(p => p.status === 'COMPLETED').length;
@@ -170,8 +184,13 @@ export default async function DashboardPage() {
                         <Link href="/dashboard/trainings" className="text-primary font-semibold text-sm hover:underline">Tümünü Gör</Link>
                     </div>
                     <div className="space-y-4">
-                        {trainings.map(t => (
-                            <div key={t.id} className="group bg-white p-6 rounded-2xl shadow-soft border border-gray-50 hover:border-primary/20 transition-all cursor-pointer">
+                        {displayTrainings.map(t => (
+                            <div key={t.id} className={`group bg-white p-6 rounded-2xl shadow-soft border ${t.is_mandatory ? 'border-primary/30 bg-primary/5' : 'border-gray-50'} hover:border-primary/20 transition-all cursor-pointer relative overflow-hidden`}>
+                                {t.is_mandatory && (
+                                    <div className="absolute top-0 right-0 bg-primary text-white text-[10px] font-bold px-3 py-1 rounded-bl-xl uppercase tracking-widest shadow-sm z-10">
+                                        Zorunlu
+                                    </div>
+                                )}
                                 <div className="flex justify-between items-start mb-4">
                                     <div>
                                         <span className="text-[10px] font-bold text-primary uppercase tracking-widest mb-1 block">
@@ -179,7 +198,7 @@ export default async function DashboardPage() {
                                         </span>
                                         <h3 className="font-bold text-secondary text-lg group-hover:text-primary transition-colors">{t.title}</h3>
                                     </div>
-                                    <div className="w-12 h-12 rounded-full border-2 border-gray-100 flex items-center justify-center text-xs font-bold text-secondary">
+                                    <div className="w-12 h-12 rounded-full border-2 border-gray-100 flex items-center justify-center text-xs font-bold text-secondary bg-white">
                                         {t.progress_percentage}%
                                     </div>
                                 </div>

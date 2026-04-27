@@ -44,14 +44,19 @@ export default function TrainingCategorySection({ cat, catProgresses }: Training
                     {catProgresses.map(p => (
                         <div key={p.id} className="group bg-white rounded-3xl shadow-soft border border-gray-100 flex flex-col h-full hover:shadow-lg transition-all overflow-hidden">
                             <div className="p-8 flex-1">
-                                <div className="flex justify-between items-start mb-6">
-                                    <span className="inline-flex items-center px-3 py-1 rounded-full text-[10px] font-bold bg-surface text-gray-500 uppercase tracking-widest border border-gray-100">
-                                        {p.training.type === 'REVEAL' ? '✨ İNTERAKTİF' : p.training.type}
-                                    </span>
-                                    {p.progress_percentage >= 100 && (
-                                        <span className="text-emerald-500 text-xl">✓</span>
-                                    )}
-                                </div>
+                                    <div className="flex flex-wrap gap-2 mb-6">
+                                        <span className="inline-flex items-center px-3 py-1 rounded-full text-[10px] font-bold bg-surface text-gray-500 uppercase tracking-widest border border-gray-100">
+                                            {p.training.type === 'REVEAL' ? '✨ İNTERAKTİF' : p.training.type}
+                                        </span>
+                                        {p.is_mandatory && (
+                                            <span className="inline-flex items-center px-3 py-1 rounded-full text-[10px] font-bold bg-primary text-white uppercase tracking-widest">
+                                                ZORUNLU
+                                            </span>
+                                        )}
+                                        {p.progress_percentage >= 100 && (
+                                            <span className="text-emerald-500 text-xl ml-auto">✓</span>
+                                        )}
+                                    </div>
                                 <h3 className="text-xl font-bold text-secondary mb-3 group-hover:text-primary transition-colors leading-tight">
                                     {p.training.title}
                                 </h3>
