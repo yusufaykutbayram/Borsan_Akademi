@@ -51,20 +51,46 @@ export default async function DashboardPage() {
                 <div className="absolute bottom-0 right-0 translate-y-1/2 -translate-x-1/4 w-64 h-64 bg-primary/10 rounded-full blur-2xl"></div>
             </section>
 
-            {/* Stats Grid */}
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-                <div className="bg-white p-8 rounded-3xl shadow-soft border border-gray-100 flex flex-col justify-between h-48">
-                    <span className="text-gray-500 text-sm font-medium uppercase tracking-wider">Mevcut Seviye</span>
-                    <div>
-                        <p className="text-3xl font-bold text-secondary">Gelişim Uzmanı</p>
-                        <p className="text-gray-400 text-sm mt-1">Sonraki seviyeye 240 XP kaldı</p>
+            {/* Stats Dashboard */}
+            <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+                {/* Profile & XP Card (Spans 2 columns on large screens) */}
+                <div className="lg:col-span-2 bg-white rounded-3xl shadow-soft border border-gray-100 overflow-hidden flex flex-col sm:flex-row">
+                    <div className="p-8 flex-1 border-b sm:border-b-0 sm:border-r border-gray-50 bg-gradient-to-br from-white to-gray-50/30">
+                        <div className="flex items-center gap-5 mb-8">
+                            <div className="w-20 h-20 bg-primary/10 rounded-2xl flex items-center justify-center text-primary text-3xl font-black shadow-inner">
+                                {user?.name?.[0]}
+                            </div>
+                            <div>
+                                <p className="text-gray-400 text-[10px] font-bold uppercase tracking-[0.2em] mb-1">Mevcut Seviye</p>
+                                <h3 className="text-3xl font-bold text-secondary">Gelişim Uzmanı</h3>
+                                <div className="flex items-center gap-2 mt-1">
+                                    <span className="w-2 h-2 bg-green-500 rounded-full animate-pulse"></span>
+                                    <span className="text-gray-400 text-xs font-medium">Kurumsal Akademi Üyesi</span>
+                                </div>
+                            </div>
+                        </div>
+                        <div className="space-y-3">
+                            <div className="flex justify-between items-end">
+                                <span className="text-xs font-bold text-secondary uppercase tracking-wider">Seviye İlerlemesi</span>
+                                <span className="text-xs font-bold text-primary bg-primary/10 px-2 py-1 rounded-md">240 XP kaldı</span>
+                            </div>
+                            <div className="w-full h-3 bg-gray-100 rounded-full overflow-hidden p-[2px]">
+                                <div className="h-full bg-gradient-to-r from-primary to-primary-dark rounded-full shadow-lg shadow-primary/20 transition-all duration-1000" style={{ width: '70%' }}></div>
+                            </div>
+                        </div>
                     </div>
-                </div>
-                <div className="bg-white p-8 rounded-3xl shadow-soft border border-gray-100 flex flex-col justify-between h-48">
-                    <span className="text-gray-500 text-sm font-medium uppercase tracking-wider">Toplam Puan</span>
-                    <div className="flex items-baseline gap-2">
-                        <p className="text-5xl font-bold text-secondary">{user?.xp_points}</p>
-                        <span className="text-primary font-bold">XP</span>
+                    <div className="p-8 sm:w-72 flex flex-col justify-center items-center bg-secondary/5 text-center relative overflow-hidden group">
+                        {/* Decorative background element */}
+                        <div className="absolute top-0 right-0 w-32 h-32 bg-primary/5 rounded-full -translate-y-1/2 translate-x-1/2 blur-2xl group-hover:bg-primary/10 transition-colors"></div>
+                        
+                        <span className="text-gray-500 text-[10px] font-bold uppercase tracking-[0.2em] mb-3 relative z-10">Toplam Birikim</span>
+                        <div className="flex items-baseline gap-1 relative z-10">
+                            <span className="text-6xl font-black text-secondary tracking-tighter">{user?.xp_points}</span>
+                            <span className="text-primary font-bold text-lg">XP</span>
+                        </div>
+                        <div className="mt-4 px-4 py-1 bg-white rounded-full shadow-sm border border-gray-100 relative z-10">
+                            <p className="text-secondary text-[10px] font-bold uppercase tracking-widest">Global Sıralama: <span className="text-primary">#12</span></p>
+                        </div>
                     </div>
                 </div>
 
@@ -91,16 +117,25 @@ export default async function DashboardPage() {
                         ))}
                     </div>
                 </div>
-                <div className="bg-white p-8 rounded-3xl shadow-soft border border-gray-100 flex flex-col justify-between h-48">
-                    <span className="text-gray-500 text-sm font-medium uppercase tracking-wider">Eğitim İlerlemesi</span>
+
+                {/* Training Progress Card (1 column) */}
+                <div className="bg-white p-8 rounded-3xl shadow-soft border border-gray-100 flex flex-col justify-between relative overflow-hidden group">
+                    <div className="flex justify-between items-start mb-6">
+                        <div>
+                            <p className="text-gray-400 text-[10px] font-bold uppercase tracking-[0.2em] mb-1">Eğitim İlerlemesi</p>
+                            <h4 className="font-bold text-secondary">Genel Durum</h4>
+                        </div>
+                        <span className="bg-green-100 text-green-600 px-3 py-1 rounded-full text-[10px] font-bold uppercase tracking-wider">Aktif</span>
+                    </div>
                     <div>
-                        <div className="flex justify-between items-end mb-2">
-                            <p className="text-3xl font-bold text-secondary">%65</p>
-                            <p className="text-gray-400 text-sm">4/6 Tamamlandı</p>
+                        <div className="flex justify-between items-baseline mb-3">
+                            <p className="text-5xl font-black text-secondary tracking-tighter">%65</p>
+                            <p className="text-gray-400 text-xs font-medium">4/6 Tamamlandı</p>
                         </div>
                         <div className="w-full h-2 bg-gray-100 rounded-full overflow-hidden">
-                            <div className="h-full bg-primary rounded-full" style={{ width: '65%' }}></div>
+                            <div className="h-full bg-gradient-to-r from-green-400 to-green-600 rounded-full transition-all duration-1000" style={{ width: '65%' }}></div>
                         </div>
+                        <p className="text-gray-400 text-[10px] mt-4 font-medium italic group-hover:text-primary transition-colors">Harika gidiyorsun! 2 modül sonra sertifika alabilirsin.</p>
                     </div>
                 </div>
             </div>
