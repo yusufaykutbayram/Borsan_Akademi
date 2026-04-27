@@ -57,7 +57,7 @@ export async function POST(req: Request) {
         ${knowledgeBase}`;
 
         const model = genAI.getGenerativeModel({ 
-            model: "gemini-1.5-flash", // Using the standard ID
+            model: "gemini-2.5-flash", // Match the successful test route
         });
 
         // Use generateContent instead of startChat for maximum compatibility if needed, 
