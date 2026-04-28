@@ -3,6 +3,8 @@ import { prisma } from "@/lib/prisma";
 import { PerformanceCard } from "./performance-card";
 import { MandatoryTrainingsAccordion } from "./mandatory-trainings-accordion";
 import { MachineLicensesAccordion } from "./machine-licenses-accordion";
+import { ProfileImageUpload } from "./profile-image-upload";
+import { PasswordChangeForm } from "./password-change-form";
 
 export default async function ProfilePage() {
     const session = await auth();
@@ -34,12 +36,11 @@ export default async function ProfilePage() {
         <div className="max-w-4xl mx-auto space-y-12 animate-fade-in pb-20">
             {/* Header / Avatar Section */}
             <div className="bg-white rounded-[2.5rem] p-10 sm:p-12 shadow-soft border border-gray-100 flex flex-col items-center text-center">
-                <div className="relative group">
-                    <div className="w-32 h-32 bg-primary rounded-full flex items-center justify-center text-5xl border-4 border-white shadow-xl transition-transform group-hover:scale-105">
-                        👤
-                    </div>
-                    <div className="absolute bottom-0 right-0 w-8 h-8 bg-emerald-500 border-4 border-white rounded-full"></div>
-                </div>
+                <ProfileImageUpload 
+                    initialImage={user?.avatar_url || null} 
+                    name={user?.name || ""} 
+                />
+                
                 <div className="mt-8 space-y-2">
                     <h1 className="text-3xl font-black text-secondary tracking-tight">{user?.name}</h1>
                     <p className="text-gray-400 font-medium">{user?.position || "Borsan Akademi Çalışanı"}</p>
@@ -147,6 +148,9 @@ export default async function ProfilePage() {
                     </div>
                 </section>
             </div>
+
+            {/* Password Change Section */}
+            <PasswordChangeForm />
         </div>
     )
 }
