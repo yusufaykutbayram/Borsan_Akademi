@@ -58,6 +58,12 @@ export default async function ProfilePage() {
                                 <span>Giriş: {new Date(user.start_date).toLocaleDateString('tr-TR')}</span>
                             </>
                         )}
+                        {user?.sicil_no && (
+                            <>
+                                <span className="hidden sm:inline opacity-30">•</span>
+                                <span>Sicil No: {user.sicil_no}</span>
+                            </>
+                        )}
                     </div>
                 </div>
                 <div className="mt-8 flex gap-3">
