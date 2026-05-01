@@ -62,31 +62,31 @@ export function CertificateViewer({ certNumber, userName, trainingName, date, do
     return (
         <div className="w-full flex flex-col items-center">
             {/* 1. VISUAL DISPLAY - MOBILE FRIENDLY PREVIEW */}
-            <div className="w-full max-w-xl bg-white border-8 border-gray-50 p-6 sm:p-10 rounded-xl shadow-lg relative flex flex-col items-center text-center space-y-4 sm:space-y-6 overflow-hidden">
+            <div className="w-full max-w-lg bg-white border-8 border-gray-50 p-6 sm:p-10 rounded-xl shadow-lg relative flex flex-col items-center text-center space-y-4 sm:space-y-6 overflow-hidden">
                 <div className="flex justify-center mb-2">
                     <Image src="/images/logo.png" alt="Logo" width={100} height={25} className="object-contain" />
                 </div>
                 
-                <h1 className="text-xl sm:text-3xl font-black text-secondary uppercase tracking-widest">Sertifika</h1>
+                <h1 className="text-xl sm:text-2xl font-black text-secondary uppercase tracking-widest">Sertifika</h1>
                 <div className="w-10 h-1 bg-primary rounded-full"></div>
 
                 <div className="space-y-1">
-                    <p className="text-[10px] sm:text-xs text-gray-400 italic">Bu belge sayın</p>
-                    <h2 className="text-lg sm:text-2xl font-bold text-secondary uppercase">{userName}</h2>
-                    <p className="text-[10px] sm:text-xs text-gray-400 italic">adlı çalışanımıza;</p>
+                    <p className="text-[10px] text-gray-400 italic">Bu belge sayın</p>
+                    <h2 className="text-lg sm:text-xl font-bold text-secondary uppercase">{userName}</h2>
+                    <p className="text-[10px] text-gray-400 italic">adlı çalışanımıza;</p>
                 </div>
 
-                <div className="bg-gray-50 py-3 px-4 rounded-xl border border-gray-100 w-full min-h-[60px] flex items-center justify-center">
-                    <h3 className="text-xs sm:text-lg font-black text-primary leading-tight line-clamp-2">{trainingName}</h3>
+                <div className="bg-gray-50 py-3 px-4 rounded-xl border border-gray-100 w-full min-h-[50px] flex items-center justify-center">
+                    <h3 className="text-xs sm:text-sm font-black text-primary leading-tight line-clamp-2">{trainingName}</h3>
                 </div>
 
-                <p className="text-[10px] sm:text-sm text-gray-600 leading-relaxed font-medium px-2">
+                <p className="text-[10px] sm:text-xs text-gray-600 leading-relaxed font-medium px-2">
                     başlıklı eğitimi ve sınavını başarıyla tamamladığı için verilmiştir.
                 </p>
 
                 <div className="w-full flex justify-between items-end pt-4 border-t border-gray-100 mt-2">
                     <div className="text-left">
-                        <p className="text-[10px] sm:text-xs font-bold text-secondary">{date}</p>
+                        <p className="text-[10px] font-bold text-secondary">{date}</p>
                         <p className="text-[7px] text-gray-400 uppercase font-black">Tarih</p>
                     </div>
                     <div className="text-right">
@@ -96,7 +96,7 @@ export function CertificateViewer({ certNumber, userName, trainingName, date, do
                 </div>
             </div>
 
-            {/* 2. EXPORT VERSION - RIGID POSITIONING TO PREVENT SHIFTING */}
+            {/* 2. EXPORT VERSION - OPTIMIZED RIGID POSITIONING */}
             <div className="fixed -left-[5000px] top-0">
                 <div 
                     ref={exportRef} 
@@ -118,65 +118,65 @@ export function CertificateViewer({ certNumber, userName, trainingName, date, do
                         border: '20px solid #f8fafc',
                         boxSizing: 'border-box',
                         position: 'relative',
-                        padding: '60px',
+                        padding: '40px',
                         textAlign: 'center'
                     }}>
-                        {/* 1. Header (Fixed Position) */}
-                        <div style={{ position: 'absolute', top: '60px', left: 0, right: 0 }}>
-                            <img src="/images/logo.png" alt="Logo" style={{ height: '50px', display: 'block', margin: '0 auto 20px' }} />
-                            <h1 style={{ fontSize: '50px', fontWeight: 'bold', color: '#111827', letterSpacing: '12px', margin: 0 }}>BAŞARI SERTİFİKASI</h1>
-                            <div style={{ width: '80px', height: '4px', backgroundColor: '#E30613', margin: '15px auto 0' }}></div>
+                        {/* 1. Header (Lowered top for more space) */}
+                        <div style={{ position: 'absolute', top: '40px', left: 0, right: 0 }}>
+                            <img src="/images/logo.png" alt="Logo" style={{ height: '40px', display: 'block', margin: '0 auto 20px' }} />
+                            <h1 style={{ fontSize: '44px', fontWeight: 'bold', color: '#111827', letterSpacing: '10px', margin: 0 }}>BAŞARI SERTİFİKASI</h1>
+                            <div style={{ width: '60px', height: '3px', backgroundColor: '#E30613', margin: '10px auto 0' }}></div>
                         </div>
 
-                        {/* 2. User Name (Fixed Position) */}
-                        <div style={{ position: 'absolute', top: '230px', left: 0, right: 0 }}>
-                            <p style={{ fontSize: '22px', color: '#6B7280', fontStyle: 'italic', margin: '0 0 15px' }}>Bu belge,</p>
-                            <h2 style={{ fontSize: '52px', color: '#111827', margin: 0, fontWeight: 'bold', textTransform: 'uppercase' }}>{userName}</h2>
-                            <p style={{ fontSize: '22px', color: '#6B7280', fontStyle: 'italic', margin: '15px 0 0' }}>adlı çalışanımıza;</p>
+                        {/* 2. User Name */}
+                        <div style={{ position: 'absolute', top: '190px', left: 0, right: 0 }}>
+                            <p style={{ fontSize: '20px', color: '#6B7280', fontStyle: 'italic', margin: '0 0 10px' }}>Bu belge,</p>
+                            <h2 style={{ fontSize: '48px', color: '#111827', margin: 0, fontWeight: 'bold', textTransform: 'uppercase' }}>{userName}</h2>
+                            <p style={{ fontSize: '20px', color: '#6B7280', fontStyle: 'italic', margin: '10px 0 0' }}>adlı çalışanımıza;</p>
                         </div>
 
-                        {/* 3. Training Name (Fixed Height Container to prevent pushing text) */}
+                        {/* 3. Training Name (Centered in its own zone) */}
                         <div style={{ 
                             position: 'absolute', 
-                            top: '400px', 
-                            left: '100px', 
-                            right: '100px', 
-                            height: '120px', 
+                            top: '350px', 
+                            left: '120px', 
+                            right: '120px', 
+                            height: '100px', 
                             display: 'flex', 
                             alignItems: 'center', 
                             justifyContent: 'center',
                             backgroundColor: '#F9FAFB', 
-                            borderRadius: '25px', 
+                            borderRadius: '20px', 
                             border: '2px solid #F3F4F6'
                         }}>
-                            <h3 style={{ fontSize: '32px', color: '#E30613', margin: 0, fontWeight: 'bold', lineHeight: '1.2', padding: '0 40px' }}>
+                            <h3 style={{ fontSize: '28px', color: '#E30613', margin: 0, fontWeight: 'bold', lineHeight: '1.2', padding: '0 30px' }}>
                                 {trainingName}
                             </h3>
                         </div>
 
-                        {/* 4. Body Text (Fixed Position) */}
-                        <div style={{ position: 'absolute', top: '540px', left: 0, right: 0 }}>
-                            <p style={{ fontSize: '22px', color: '#374151', maxWidth: '850px', margin: '0 auto', lineHeight: '1.5' }}>
+                        {/* 4. Body Text (More room between training and footer) */}
+                        <div style={{ position: 'absolute', top: '480px', left: '100px', right: '100px' }}>
+                            <p style={{ fontSize: '20px', color: '#374151', maxWidth: '800px', margin: '0 auto', lineHeight: '1.5' }}>
                                 başlıklı eğitimi ve bu eğitime ait değerlendirme sınavını başarıyla tamamlayarak, bu sertifikayı kazanmaya hak kazandığı için verilmiştir.
                             </p>
                         </div>
 
-                        {/* 5. Footer (Fixed Position) */}
+                        {/* 5. Footer (Pushed lower) */}
                         <div style={{ 
                             position: 'absolute', 
-                            bottom: '80px', 
+                            bottom: '60px', 
                             left: '100px', 
                             right: '100px', 
                             borderTop: '2px solid #F3F4F6',
-                            paddingTop: '25px',
+                            paddingTop: '20px',
                         }}>
                             <div style={{ float: 'left', textAlign: 'left' }}>
-                                <p style={{ fontSize: '26px', fontWeight: 'bold', margin: '0 0 5px', color: '#111827' }}>{date}</p>
-                                <p style={{ fontSize: '11px', color: '#9CA3AF', textTransform: 'uppercase', fontWeight: 'bold', margin: 0, letterSpacing: '1px' }}>DÜZENLENME TARİHİ</p>
+                                <p style={{ fontSize: '24px', fontWeight: 'bold', margin: '0 0 5px', color: '#111827' }}>{date}</p>
+                                <p style={{ fontSize: '10px', color: '#9CA3AF', textTransform: 'uppercase', fontWeight: 'bold', margin: 0, letterSpacing: '1px' }}>DÜZENLENME TARİHİ</p>
                             </div>
                             <div style={{ float: 'right', textAlign: 'right' }}>
-                                 <p style={{ fontSize: '11px', color: '#9CA3AF', fontWeight: 'bold', textTransform: 'uppercase', margin: '0 0 10px', letterSpacing: '1px' }}>DOĞRULAMA KODU</p>
-                                 <p style={{ fontSize: '16px', fontFamily: 'monospace', padding: '10px 20px', backgroundColor: '#F9FAFB', border: '1px solid #E5E7EB', borderRadius: '10px', margin: 0, display: 'inline-block', fontWeight: 'bold', color: '#111827' }}>{certNumber}</p>
+                                 <p style={{ fontSize: '10px', color: '#9CA3AF', fontWeight: 'bold', textTransform: 'uppercase', margin: '0 0 8px', letterSpacing: '1px' }}>DOĞRULAMA KODU</p>
+                                 <p style={{ fontSize: '14px', fontFamily: 'monospace', padding: '8px 15px', backgroundColor: '#F9FAFB', border: '1px solid #E5E7EB', borderRadius: '8px', margin: 0, display: 'inline-block', fontWeight: 'bold', color: '#111827' }}>{certNumber}</p>
                             </div>
                             <div style={{ clear: 'both' }}></div>
                         </div>
