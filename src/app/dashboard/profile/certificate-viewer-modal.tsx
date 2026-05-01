@@ -28,24 +28,16 @@ export function CertificateViewer({ certNumber, userName, trainingName, date, do
             btn.setAttribute('disabled', 'true');
 
             try {
-                // IMPORTANT: html2canvas works best when the element is actually in the DOM and visible (but can be off-screen)
                 const el = exportRef.current;
                 el.style.display = 'block';
                 
-                // Use a very high scale for print quality
                 const canvas = await html2canvas(el, {
                     scale: 3,
                     useCORS: true,
                     backgroundColor: '#ffffff',
                     width: 1123,
                     height: 794,
-                    onclone: (clonedDoc) => {
-                        // Ensure the cloned element is visible
-                        const clonedEl = clonedDoc.getElementById('certificate-export-container');
-                        if (clonedEl) {
-                            clonedEl.style.display = 'block';
-                        }
-                    }
+                    logging: false
                 });
 
                 el.style.display = 'none';
@@ -84,8 +76,8 @@ export function CertificateViewer({ certNumber, userName, trainingName, date, do
                     <p className="text-[10px] sm:text-xs text-gray-400 italic">adlı çalışanımıza;</p>
                 </div>
 
-                <div className="bg-gray-50 py-3 px-4 rounded-xl border border-gray-100 w-full">
-                    <h3 className="text-xs sm:text-lg font-black text-primary leading-tight">{trainingName}</h3>
+                <div className="bg-gray-50 py-3 px-4 rounded-xl border border-gray-100 w-full min-h-[60px] flex items-center justify-center">
+                    <h3 className="text-xs sm:text-lg font-black text-primary leading-tight line-clamp-2">{trainingName}</h3>
                 </div>
 
                 <p className="text-[10px] sm:text-sm text-gray-600 leading-relaxed font-medium px-2">
@@ -104,8 +96,7 @@ export function CertificateViewer({ certNumber, userName, trainingName, date, do
                 </div>
             </div>
 
-            {/* 2. EXPORT VERSION - ULTRA STABLE BOX MODEL */}
-            {/* This is kept in the DOM but hidden/off-screen to ensure fonts and styles are loaded */}
+            {/* 2. EXPORT VERSION - RIGID POSITIONING TO PREVENT SHIFTING */}
             <div className="fixed -left-[5000px] top-0">
                 <div 
                     ref={exportRef} 
@@ -116,7 +107,8 @@ export function CertificateViewer({ certNumber, userName, trainingName, date, do
                         backgroundColor: 'white',
                         position: 'relative',
                         boxSizing: 'border-box',
-                        display: 'none' // Controlled by JS during capture
+                        display: 'none',
+                        fontFamily: 'Arial, sans-serif'
                     }}
                 >
                     <div style={{ 
@@ -127,59 +119,66 @@ export function CertificateViewer({ certNumber, userName, trainingName, date, do
                         boxSizing: 'border-box',
                         position: 'relative',
                         padding: '60px',
-                        textAlign: 'center',
-                        fontFamily: 'Arial, sans-serif'
+                        textAlign: 'center'
                     }}>
-                        {/* Background watermark or corner elements if needed */}
-                        <div style={{ position: 'absolute', top: 0, left: 0, width: '150px', height: '150px', borderTop: '8px solid #E30613', borderLeft: '8px solid #E30613', opacity: 0.1 }}></div>
-                        <div style={{ position: 'absolute', bottom: 0, right: 0, width: '150px', height: '150px', borderBottom: '8px solid #E30613', borderRight: '8px solid #E30613', opacity: 0.1 }}></div>
-
-                        <div style={{ marginBottom: '40px' }}>
-                            <img src="/images/logo.png" alt="Logo" style={{ height: '50px', display: 'block', margin: '0 auto 30px' }} />
-                            <h1 style={{ fontSize: '60px', fontWeight: 'bold', color: '#111827', letterSpacing: '15px', margin: '0 0 10px' }}>BAŞARI SERTİFİKASI</h1>
-                            <div style={{ width: '100px', height: '4px', backgroundColor: '#E30613', margin: '0 auto' }}></div>
+                        {/* 1. Header (Fixed Position) */}
+                        <div style={{ position: 'absolute', top: '60px', left: 0, right: 0 }}>
+                            <img src="/images/logo.png" alt="Logo" style={{ height: '50px', display: 'block', margin: '0 auto 20px' }} />
+                            <h1 style={{ fontSize: '50px', fontWeight: 'bold', color: '#111827', letterSpacing: '12px', margin: 0 }}>BAŞARI SERTİFİKASI</h1>
+                            <div style={{ width: '80px', height: '4px', backgroundColor: '#E30613', margin: '15px auto 0' }}></div>
                         </div>
 
-                        <div style={{ marginTop: '60px' }}>
-                            <p style={{ fontSize: '24px', color: '#6B7280', fontStyle: 'italic', margin: '0 0 20px' }}>Bu belge,</p>
-                            <h2 style={{ fontSize: '56px', color: '#111827', margin: '0 0 20px', fontWeight: 'bold', textTransform: 'uppercase' }}>{userName}</h2>
-                            <p style={{ fontSize: '24px', color: '#6B7280', fontStyle: 'italic', margin: '0 0 40px' }}>adlı çalışanımıza;</p>
-                            
-                            <div style={{ 
-                                padding: '30px 50px', 
-                                backgroundColor: '#F9FAFB', 
-                                borderRadius: '30px', 
-                                border: '2px solid #F3F4F6',
-                                display: 'inline-block',
-                                maxWidth: '850px'
-                            }}>
-                                <h3 style={{ fontSize: '36px', color: '#E30613', margin: 0, fontWeight: 'bold' }}>{trainingName}</h3>
-                            </div>
+                        {/* 2. User Name (Fixed Position) */}
+                        <div style={{ position: 'absolute', top: '230px', left: 0, right: 0 }}>
+                            <p style={{ fontSize: '22px', color: '#6B7280', fontStyle: 'italic', margin: '0 0 15px' }}>Bu belge,</p>
+                            <h2 style={{ fontSize: '52px', color: '#111827', margin: 0, fontWeight: 'bold', textTransform: 'uppercase' }}>{userName}</h2>
+                            <p style={{ fontSize: '22px', color: '#6B7280', fontStyle: 'italic', margin: '15px 0 0' }}>adlı çalışanımıza;</p>
+                        </div>
 
-                            <p style={{ fontSize: '22px', color: '#374151', maxWidth: '800px', margin: '40px auto', lineHeight: '1.6' }}>
+                        {/* 3. Training Name (Fixed Height Container to prevent pushing text) */}
+                        <div style={{ 
+                            position: 'absolute', 
+                            top: '400px', 
+                            left: '100px', 
+                            right: '100px', 
+                            height: '120px', 
+                            display: 'flex', 
+                            alignItems: 'center', 
+                            justifyContent: 'center',
+                            backgroundColor: '#F9FAFB', 
+                            borderRadius: '25px', 
+                            border: '2px solid #F3F4F6'
+                        }}>
+                            <h3 style={{ fontSize: '32px', color: '#E30613', margin: 0, fontWeight: 'bold', lineHeight: '1.2', padding: '0 40px' }}>
+                                {trainingName}
+                            </h3>
+                        </div>
+
+                        {/* 4. Body Text (Fixed Position) */}
+                        <div style={{ position: 'absolute', top: '540px', left: 0, right: 0 }}>
+                            <p style={{ fontSize: '22px', color: '#374151', maxWidth: '850px', margin: '0 auto', lineHeight: '1.5' }}>
                                 başlıklı eğitimi ve bu eğitime ait değerlendirme sınavını başarıyla tamamlayarak, bu sertifikayı kazanmaya hak kazandığı için verilmiştir.
                             </p>
                         </div>
 
-                        {/* Footer - Absolute to prevent shifting */}
+                        {/* 5. Footer (Fixed Position) */}
                         <div style={{ 
                             position: 'absolute', 
                             bottom: '80px', 
                             left: '100px', 
                             right: '100px', 
                             borderTop: '2px solid #F3F4F6',
-                            paddingTop: '30px',
-                            display: 'table',
-                            width: 'calc(100% - 200px)'
+                            paddingTop: '25px',
                         }}>
-                            <div style={{ display: 'table-cell', textAlign: 'left', width: '50%' }}>
+                            <div style={{ float: 'left', textAlign: 'left' }}>
                                 <p style={{ fontSize: '26px', fontWeight: 'bold', margin: '0 0 5px', color: '#111827' }}>{date}</p>
-                                <p style={{ fontSize: '12px', color: '#9CA3AF', textTransform: 'uppercase', fontWeight: 'bold', margin: 0, letterSpacing: '1px' }}>DÜZENLENME TARİHİ</p>
+                                <p style={{ fontSize: '11px', color: '#9CA3AF', textTransform: 'uppercase', fontWeight: 'bold', margin: 0, letterSpacing: '1px' }}>DÜZENLENME TARİHİ</p>
                             </div>
-                            <div style={{ display: 'table-cell', textAlign: 'right', width: '50%', verticalAlign: 'bottom' }}>
-                                 <p style={{ fontSize: '12px', color: '#9CA3AF', fontWeight: 'bold', textTransform: 'uppercase', margin: '0 0 10px', letterSpacing: '1px' }}>DOĞRULAMA KODU</p>
+                            <div style={{ float: 'right', textAlign: 'right' }}>
+                                 <p style={{ fontSize: '11px', color: '#9CA3AF', fontWeight: 'bold', textTransform: 'uppercase', margin: '0 0 10px', letterSpacing: '1px' }}>DOĞRULAMA KODU</p>
                                  <p style={{ fontSize: '16px', fontFamily: 'monospace', padding: '10px 20px', backgroundColor: '#F9FAFB', border: '1px solid #E5E7EB', borderRadius: '10px', margin: 0, display: 'inline-block', fontWeight: 'bold', color: '#111827' }}>{certNumber}</p>
                             </div>
+                            <div style={{ clear: 'both' }}></div>
                         </div>
                     </div>
                 </div>
