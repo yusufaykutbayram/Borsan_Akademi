@@ -46,7 +46,8 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
           where: {
             OR: [
               { name: { equals: credentials.name as string, mode: 'insensitive' } },
-              { tc_number: { equals: credentials.name as string, mode: 'insensitive' } }
+              { tc_number: { equals: credentials.name as string, mode: 'insensitive' } },
+              { sicil_no: { equals: credentials.name as string, mode: 'insensitive' } }
             ]
           }
         });
