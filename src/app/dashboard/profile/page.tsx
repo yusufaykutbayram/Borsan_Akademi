@@ -5,6 +5,7 @@ import { MandatoryTrainingsAccordion } from "./mandatory-trainings-accordion";
 import { MachineLicensesAccordion } from "./machine-licenses-accordion";
 import { ProfileImageUpload } from "./profile-image-upload";
 import { PasswordChangeForm } from "./password-change-form";
+import { FeedbackForm } from "./feedback-form";
 
 export default async function ProfilePage() {
     const session = await auth();
@@ -175,6 +176,9 @@ export default async function ProfilePage() {
                     </div>
                 </section>
             </div>
+
+            {/* Feedback Form Section */}
+            <FeedbackForm />
 
             {/* Password Change Section */}
             <PasswordChangeForm />
