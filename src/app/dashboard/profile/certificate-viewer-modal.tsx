@@ -40,14 +40,18 @@ export function CertificateViewer({ certNumber, userName, trainingName, date, do
                 el.style.zIndex = '-9999';
 
                 const canvas = await html2canvas(el, {
-                    scale: 2,
+                    scale: 3, // Higher scale for better quality
                     useCORS: true,
                     backgroundColor: '#ffffff',
                     logging: false,
                     width: 1123,
-                    height: 794,
+                    height: 840, // Increased height to prevent bottom clipping
                     windowWidth: 1123,
-                    windowHeight: 794
+                    windowHeight: 840,
+                    x: 0,
+                    y: 0,
+                    scrollX: 0,
+                    scrollY: 0
                 });
 
                 el.style.display = 'none';
@@ -157,7 +161,7 @@ export function CertificateViewer({ certNumber, userName, trainingName, date, do
                         </p>
                     </div>
 
-                    <div style={{ width: '100%', display: 'flex', justifyContent: 'space-between', alignItems: 'flex-end', padding: '0 40px' }}>
+                    <div style={{ width: '100%', display: 'flex', justifyContent: 'space-between', alignItems: 'flex-end', padding: '0 40px', marginBottom: '40px' }}>
                         <div style={{ textAlign: 'center' }}>
                             <p style={{ fontSize: '24px', fontWeight: 'bold', borderBottom: '2px solid #e5e7eb', paddingBottom: '10px', marginBottom: '10px', minWidth: '200px' }}>{date}</p>
                             <p style={{ fontSize: '12px', color: '#9ca3af', textTransform: 'uppercase', fontWeight: 'bold', letterSpacing: '2px' }}>Tarih</p>
@@ -167,6 +171,8 @@ export function CertificateViewer({ certNumber, userName, trainingName, date, do
                              <p style={{ fontSize: '14px', fontFamily: 'monospace', padding: '10px 20px', backgroundColor: '#f9fafb', border: '1px solid #e5e7eb', borderRadius: '8px' }}>{certNumber}</p>
                         </div>
                     </div>
+                    {/* Bottom spacer to prevent clipping */}
+                    <div style={{ height: '40px', width: '100%' }}></div>
                 </div>
             </div>
         </div>

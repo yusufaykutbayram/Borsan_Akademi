@@ -97,14 +97,8 @@ export default async function DashboardPage() {
                             <span className="text-gray-400 text-[10px] font-medium uppercase tracking-wider">Kurumsal Akademi Üyesi</span>
                         </div>
                     </div>
-                    <div className="mt-6 sm:mt-0">
-                        <div className="flex justify-between items-center mb-2.5">
-                            <span className="text-[10px] font-bold text-secondary uppercase tracking-wider">Seviye İlerlemesi</span>
-                            <span className="text-[10px] font-bold text-primary">240 XP kaldı</span>
-                        </div>
-                        <div className="w-full h-2 bg-gray-100 rounded-full overflow-hidden">
-                            <div className="h-full bg-gradient-to-r from-primary to-primary-dark rounded-full" style={{ width: '70%' }}></div>
-                        </div>
+                    <div className="mt-4 sm:mt-0 opacity-0 h-0 overflow-hidden">
+                        {/* Seviye ilerlemesi kaldırıldı */}
                     </div>
                 </div>
 
