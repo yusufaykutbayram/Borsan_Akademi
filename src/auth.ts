@@ -38,7 +38,9 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
         password: { label: "Şifre", type: "password" }
       },
       async authorize(credentials) {
+        console.log('Login attempt received:', credentials?.name);
         if (!credentials?.name || !credentials?.password) {
+          console.log('Missing name or password');
           return null;
         }
 
@@ -52,11 +54,14 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
           }
         });
 
-        if (users.length === 0) return null;
+        console.log('Matching users found:', users.length);
 
         for (const user of users) {
+          console.log('Comparing password for user:', user.name, 'TC:', user.tc_number);
           const isPasswordValid = await bcrypt.compare(credentials.password as string, user.password_hash);
+          console.log('Is password valid?', isPasswordValid);
           if (isPasswordValid) {
+            console.log('Login success for user:', user.name);
             return {
               id: user.id,
               name: user.name,
@@ -67,6 +72,7 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
           }
         }
 
+        console.log('No valid user/password combination found');
         return null;
       }
     })
