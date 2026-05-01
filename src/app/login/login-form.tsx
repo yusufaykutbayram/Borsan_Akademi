@@ -22,24 +22,9 @@ function LoginButton() {
 
 export function LoginForm() {
   const [errorMessage, dispatch] = useActionState(authenticate, undefined)
-  const router = useRouter()
-
-  useEffect(() => {
-    if (errorMessage === undefined && !document.querySelector('.bg-red-50')) {
-      // If no error message and we just submitted, it might be successful
-      // Since we can't easily tell success from useActionState without a specific state,
-      // we rely on the action to redirect or we do it here if we can detect it.
-    }
-  }, [errorMessage])
 
   return (
-    <form action={async (formData) => {
-      const result = await dispatch(formData);
-      if (!result) {
-        // Success! Redirect to home or dashboard
-        window.location.href = '/';
-      }
-    }} className="space-y-6">
+    <form action={dispatch} className="space-y-6">
       <div className="space-y-2">
         <label className="text-xs font-bold text-gray-400 uppercase tracking-widest ml-1" htmlFor="name">Ad Soyad veya ID</label>
         <input 
