@@ -38,12 +38,12 @@ export default async function ProfilePage() {
         <div className="max-w-4xl mx-auto space-y-12 animate-fade-in pb-20">
             {/* Header / Avatar Section */}
             <div className="bg-white rounded-[2.5rem] p-6 sm:p-12 shadow-soft border border-gray-100 flex flex-col items-center text-center relative overflow-hidden">
-                {/* Responsive Feedback Button */}
-                <div className="absolute top-4 right-4 sm:top-8 sm:right-8 z-10 scale-90 sm:scale-100">
+                {/* Responsive Feedback Button - Relative on mobile, absolute on desktop */}
+                <div className="w-full flex justify-end sm:absolute sm:top-8 sm:right-8 sm:w-auto mb-4 sm:mb-0">
                     <FeedbackForm />
                 </div>
 
-                <div className="mt-4 sm:mt-0">
+                <div className="flex flex-col items-center">
                     <ProfileImageUpload 
                         initialImage={user?.avatar_url || null} 
                         name={user?.name || ""} 
@@ -75,30 +75,30 @@ export default async function ProfilePage() {
                         )}
                     </div>
                 </div>
-                <div className="mt-8 grid grid-cols-2 sm:flex sm:flex-wrap justify-center gap-3 w-full">
-                    <div className="px-4 sm:px-8 py-3 bg-surface rounded-2xl border border-gray-100 flex flex-col justify-center">
-                        <p className="text-[10px] font-bold text-gray-400 uppercase tracking-widest mb-1">Toplam Puan</p>
-                        <p className="text-xl sm:text-2xl font-black text-secondary">{user?.xp_points} <span className="text-[10px] text-primary">XP</span></p>
+                <div className="mt-8 grid grid-cols-2 lg:flex lg:flex-wrap justify-center gap-2 sm:gap-3 w-full">
+                    <div className="px-3 sm:px-8 py-3 bg-surface rounded-2xl border border-gray-100 flex flex-col justify-center">
+                        <p className="text-[9px] sm:text-[10px] font-bold text-gray-400 uppercase tracking-widest mb-1">Toplam Puan</p>
+                        <p className="text-lg sm:text-2xl font-black text-secondary">{user?.xp_points} <span className="text-[10px] text-primary">XP</span></p>
                     </div>
-                    <div className="px-4 sm:px-8 py-3 bg-surface rounded-2xl border border-gray-100 flex flex-col justify-center">
-                        <p className="text-[10px] font-bold text-gray-400 uppercase tracking-widest mb-1">Rozetler</p>
-                        <p className="text-xl sm:text-2xl font-black text-secondary">{user?.user_badges.length}</p>
+                    <div className="px-3 sm:px-8 py-3 bg-surface rounded-2xl border border-gray-100 flex flex-col justify-center">
+                        <p className="text-[9px] sm:text-[10px] font-bold text-gray-400 uppercase tracking-widest mb-1">Rozetler</p>
+                        <p className="text-lg sm:text-2xl font-black text-secondary">{user?.user_badges.length}</p>
                     </div>
-                    <div className="px-4 sm:px-6 py-3 bg-surface rounded-2xl border border-gray-100 min-w-0 flex flex-col justify-center">
-                        <p className="text-[10px] font-bold text-gray-400 uppercase tracking-widest mb-1">Hak Edilen</p>
-                        <p className="text-lg sm:text-xl font-black text-secondary whitespace-nowrap">{user?.annual_leave_entitled || 0} <span className="text-[10px] text-gray-400">GÜN</span></p>
+                    <div className="px-3 sm:px-6 py-3 bg-surface rounded-2xl border border-gray-100 min-w-0 flex flex-col justify-center">
+                        <p className="text-[9px] sm:text-[10px] font-bold text-gray-400 uppercase tracking-widest mb-1">Hak Edilen</p>
+                        <p className="text-base sm:text-xl font-black text-secondary whitespace-nowrap">{user?.annual_leave_entitled || 0} <span className="text-[10px] text-gray-400">GÜN</span></p>
                     </div>
-                    <div className="px-4 sm:px-6 py-3 bg-surface rounded-2xl border border-gray-100 min-w-0 flex flex-col justify-center">
-                        <p className="text-[10px] font-bold text-gray-400 uppercase tracking-widest mb-1">Kullanılan</p>
-                        <p className="text-lg sm:text-xl font-black text-secondary whitespace-nowrap">{user?.annual_leave_used || 0} <span className="text-[10px] text-gray-400">GÜN</span></p>
+                    <div className="px-3 sm:px-6 py-3 bg-surface rounded-2xl border border-gray-100 min-w-0 flex flex-col justify-center">
+                        <p className="text-[9px] sm:text-[10px] font-bold text-gray-400 uppercase tracking-widest mb-1">Kullanılan</p>
+                        <p className="text-base sm:text-xl font-black text-secondary whitespace-nowrap">{user?.annual_leave_used || 0} <span className="text-[10px] text-gray-400">GÜN</span></p>
                     </div>
-                    <div className="px-4 sm:px-6 py-3 bg-red-50 rounded-2xl border border-red-100 min-w-0 flex flex-col justify-center">
-                        <p className="text-[10px] font-bold text-red-400 uppercase tracking-widest mb-1">Kalan İzin</p>
-                        <p className="text-lg sm:text-xl font-black text-secondary whitespace-nowrap">{user?.annual_leave_remaining || 0} <span className="text-[10px] text-red-500">GÜN</span></p>
+                    <div className="px-3 sm:px-6 py-3 bg-red-50 rounded-2xl border border-red-100 min-w-0 flex flex-col justify-center">
+                        <p className="text-[9px] sm:text-[10px] font-bold text-red-400 uppercase tracking-widest mb-1">Kalan İzin</p>
+                        <p className="text-base sm:text-xl font-black text-secondary whitespace-nowrap">{user?.annual_leave_remaining || 0} <span className="text-[10px] text-red-500">GÜN</span></p>
                     </div>
-                    <div className="px-4 sm:px-6 py-3 bg-blue-50 rounded-2xl border border-blue-100 col-span-2 sm:col-auto flex flex-col justify-center">
-                        <p className="text-[10px] font-bold text-blue-400 uppercase tracking-widest mb-1">Hak Ediş Tarihi</p>
-                        <p className="text-sm font-black text-secondary">
+                    <div className="px-3 sm:px-6 py-3 bg-blue-50 rounded-2xl border border-blue-100 col-span-2 lg:col-auto flex flex-col justify-center">
+                        <p className="text-[9px] sm:text-[10px] font-bold text-blue-400 uppercase tracking-widest mb-1">Hak Ediş Tarihi</p>
+                        <p className="text-xs sm:text-sm font-black text-secondary">
                             {user?.annual_leave_entitlement_date 
                                 ? new Date(user.annual_leave_entitlement_date).toLocaleDateString('tr-TR')
                                 : "-"

@@ -14,30 +14,37 @@ interface CertificateViewerProps {
 }
 
 export function CertificateViewer({ certNumber, userName, trainingName, date, downloadBtnId }: CertificateViewerProps) {
-    const certRef = useRef<HTMLDivElement>(null);
+    const exportRef = useRef<HTMLDivElement>(null);
 
     useEffect(() => {
         const btn = document.getElementById(downloadBtnId);
         if (!btn) return;
 
         const handleDownload = async () => {
-            if (!certRef.current) return;
+            if (!exportRef.current) return;
             
             const originalBtnText = btn.innerHTML;
             btn.innerHTML = 'Hazırlanıyor...';
             btn.setAttribute('disabled', 'true');
 
             try {
-                const canvas = await html2canvas(certRef.current, {
-                    scale: 3,
+                // Temporarily show the export element to capture it
+                const el = exportRef.current;
+                el.style.display = 'block';
+                el.style.position = 'fixed';
+                el.style.left = '-9999px';
+                el.style.top = '0';
+
+                const canvas = await html2canvas(el, {
+                    scale: 2,
                     useCORS: true,
                     backgroundColor: '#ffffff',
-                    // Ensure the capture is the full resolution of the certificate
-                    width: 1123, // A4 landscape at 96dpi approx
-                    height: 794
+                    logging: false,
                 });
 
-                const imgData = canvas.toDataURL('image/jpeg', 1.0);
+                el.style.display = 'none';
+
+                const imgData = canvas.toDataURL('image/jpeg', 0.95);
                 const pdf = new jsPDF('l', 'mm', 'a4');
                 const pdfWidth = pdf.internal.pageSize.getWidth();
                 const pdfHeight = pdf.internal.pageSize.getHeight();
@@ -58,92 +65,101 @@ export function CertificateViewer({ certNumber, userName, trainingName, date, do
     }, [certNumber, downloadBtnId]);
 
     return (
-        /* The container for visual display - responsive */
-        <div className="w-full mx-auto overflow-x-auto pb-4 scrollbar-hide">
-            {/* The actual certificate - fixed size for export but scaled down for display */}
-            <div 
-                ref={certRef} 
-                className="bg-white shadow-xl relative mx-auto overflow-hidden shrink-0" 
-                style={{ 
-                    width: '1000px', 
-                    height: '707px', // A4 Landscape ratio
-                    transform: 'scale(var(--cert-scale, 1))',
-                    transformOrigin: 'top center',
-                    margin: '0 auto',
-                    // Responsive scaling using CSS variable
-                }}
-            >
-                <div className="absolute inset-0 p-12 bg-white flex flex-col items-center justify-between border-[20px] border-[#f8fafc]">
-                    
-                    {/* Decorative Elements */}
-                    <div className="absolute top-0 left-0 w-32 h-32 border-t-8 border-l-8 border-primary opacity-10"></div>
-                    <div className="absolute top-0 right-0 w-32 h-32 border-t-8 border-r-8 border-primary opacity-10"></div>
-                    <div className="absolute bottom-0 left-0 w-32 h-32 border-b-8 border-l-8 border-primary opacity-10"></div>
-                    <div className="absolute bottom-0 right-0 w-32 h-32 border-b-8 border-r-8 border-primary opacity-10"></div>
+        <div className="w-full flex flex-col items-center">
+            {/* 1. VISUAL DISPLAY - MOBILE FRIENDLY */}
+            <div className="w-full max-w-2xl bg-white border-8 border-gray-50 p-4 sm:p-10 rounded-xl shadow-lg relative flex flex-col items-center text-center space-y-4 sm:space-y-6">
+                <div className="flex justify-center mb-2">
+                    <Image src="/images/logo.png" alt="Logo" width={120} height={30} className="object-contain" />
+                </div>
+                
+                <h1 className="text-2xl sm:text-4xl font-black text-secondary uppercase tracking-widest">Sertifika</h1>
+                <div className="w-12 h-1 bg-primary rounded-full"></div>
 
-                    {/* Header */}
-                    <div className="text-center mt-4">
-                        <div className="flex justify-center mb-6">
-                            <Image src="/images/logo.png" alt="Borsan Logo" width={180} height={45} className="object-contain" />
-                        </div>
-                        <h1 className="text-5xl font-black text-secondary tracking-widest uppercase mb-2" style={{ fontFamily: 'Georgia, serif' }}>Başarı Sertifikası</h1>
-                        <div className="w-24 h-1 bg-primary mx-auto rounded-full"></div>
+                <div className="space-y-2">
+                    <p className="text-xs sm:text-sm text-gray-400 italic font-medium">Bu belge sayın</p>
+                    <h2 className="text-xl sm:text-3xl font-bold text-secondary uppercase">{userName}</h2>
+                    <p className="text-xs sm:text-sm text-gray-400 italic font-medium">adlı çalışanımıza;</p>
+                </div>
+
+                <div className="bg-gray-50 py-4 px-6 rounded-2xl border border-gray-100 w-full">
+                    <h3 className="text-sm sm:text-xl font-black text-primary leading-tight">{trainingName}</h3>
+                </div>
+
+                <p className="text-xs sm:text-base text-gray-600 leading-relaxed font-medium">
+                    başlıklı eğitimi ve sınavını başarıyla tamamladığı için verilmiştir.
+                </p>
+
+                <div className="w-full flex justify-between items-end pt-4 border-t border-gray-100">
+                    <div className="text-left">
+                        <p className="text-xs sm:text-sm font-bold text-secondary">{date}</p>
+                        <p className="text-[8px] text-gray-400 uppercase font-black">Tarih</p>
                     </div>
-
-                    {/* Body */}
-                    <div className="text-center max-w-3xl mx-auto space-y-6">
-                        <p className="text-xl text-gray-400 italic font-medium">Bu belge,</p>
-                        <h2 className="text-5xl font-bold text-secondary uppercase tracking-tight">{userName}</h2>
-                        <p className="text-xl text-gray-400 italic font-medium">adlı çalışanımızın;</p>
-                        
-                        <div className="bg-gray-50/50 py-8 px-10 rounded-3xl border border-gray-100 my-4">
-                            <h3 className="text-3xl font-black text-primary leading-tight">{trainingName}</h3>
-                        </div>
-
-                        <p className="text-xl text-gray-600 leading-relaxed px-12 font-medium">
-                            başlıklı eğitim modülünü ve beraberindeki değerlendirme sınavını başarıyla tamamlayarak, yetkinliğini kanıtladığı için verilmiştir.
-                        </p>
-                    </div>
-
-                    {/* Footer */}
-                    <div className="w-full flex justify-between items-end px-16 mb-6">
-                        <div className="text-center">
-                            <p className="text-xl font-bold text-secondary border-b-2 border-gray-100 pb-2 mb-2 w-48">{date}</p>
-                            <p className="text-[10px] text-gray-400 uppercase tracking-widest font-black">Düzenlenme Tarihi</p>
-                        </div>
-                        
-                        <div className="text-center flex flex-col items-center">
-                            <div className="w-20 h-20 bg-primary/5 rounded-full flex items-center justify-center mb-2 border border-primary/10 relative">
-                                <span className="text-3xl">🏅</span>
-                            </div>
-                            <p className="text-[10px] text-primary font-black uppercase tracking-widest">Resmi Onay</p>
-                        </div>
-
-                        <div className="text-center">
-                            <p className="text-[10px] font-bold text-gray-400 mb-2 uppercase tracking-widest">Doğrulama Kodu</p>
-                            <p className="text-xs font-mono text-secondary bg-gray-50 px-4 py-2 rounded-lg border border-gray-200 font-bold">{certNumber}</p>
-                        </div>
+                    <div className="text-right">
+                        <p className="text-[8px] font-bold text-gray-400 mb-1 uppercase tracking-widest">Sertifika Kodu</p>
+                        <p className="text-[10px] font-mono text-secondary bg-gray-50 px-2 py-1 rounded border border-gray-200 font-bold">{certNumber}</p>
                     </div>
                 </div>
             </div>
 
-            {/* Mobile scaling logic inline style */}
-            <style jsx>{`
-                div {
-                    --cert-scale: 1;
-                }
-                @media (max-width: 1040px) {
-                    div { --cert-scale: ${typeof window !== 'undefined' ? (window.innerWidth - 64) / 1000 : 0.8}; }
-                }
-                @media (max-width: 640px) {
-                    div { --cert-scale: ${typeof window !== 'undefined' ? (window.innerWidth - 32) / 1000 : 0.4}; }
-                }
-            `}</style>
-            
-            {/* Fallback for when JS window size isn't ready or for better CSS-only scaling */}
-            <div className="hidden">
-                {/* CSS only scaling is tricky without container queries, 
-                    so the overflow-x-auto is the safest fallback */}
+            {/* 2. HIDDEN EXPORT VERSION - FIXED SIZE FOR CLEAN PDF */}
+            <div 
+                ref={exportRef} 
+                style={{ 
+                    display: 'none', 
+                    width: '1123px', 
+                    height: '794px', 
+                    padding: '60px',
+                    backgroundColor: 'white',
+                    fontFamily: 'sans-serif'
+                }}
+            >
+                <div style={{ 
+                    border: '20px solid #f8fafc', 
+                    height: '100%', 
+                    width: '100%', 
+                    boxSizing: 'border-box',
+                    padding: '40px',
+                    display: 'flex',
+                    flexDirection: 'column',
+                    alignItems: 'center',
+                    justifyContent: 'space-between',
+                    position: 'relative'
+                }}>
+                    {/* Corners */}
+                    <div style={{ position: 'absolute', top: 0, left: 0, width: '100px', height: '100px', borderTop: '10px solid #E30613', borderLeft: '10px solid #E30613', opacity: 0.2 }}></div>
+                    <div style={{ position: 'absolute', top: 0, right: 0, width: '100px', height: '100px', borderTop: '10px solid #E30613', borderRight: '10px solid #E30613', opacity: 0.2 }}></div>
+                    <div style={{ position: 'absolute', bottom: 0, left: 0, width: '100px', height: '100px', borderBottom: '10px solid #E30613', borderLeft: '10px solid #E30613', opacity: 0.2 }}></div>
+                    <div style={{ position: 'absolute', bottom: 0, right: 0, width: '100px', height: '100px', borderBottom: '10px solid #E30613', borderRight: '10px solid #E30613', opacity: 0.2 }}></div>
+
+                    <div style={{ textAlign: 'center' }}>
+                        <img src="/images/logo.png" alt="Logo" style={{ height: '60px', marginBottom: '30px' }} />
+                        <h1 style={{ fontSize: '60px', margin: '0 0 10px 0', fontWeight: '900', color: '#1a1a1a', letterSpacing: '10px', textTransform: 'uppercase' }}>BAŞARI SERTİFİKASI</h1>
+                        <div style={{ width: '100px', height: '4px', backgroundColor: '#E30613', margin: '0 auto' }}></div>
+                    </div>
+
+                    <div style={{ textAlign: 'center', flex: 1, display: 'flex', flexDirection: 'column', justifyContent: 'center', gap: '30px' }}>
+                        <p style={{ fontSize: '24px', color: '#666', fontStyle: 'italic' }}>Bu sertifika,</p>
+                        <h2 style={{ fontSize: '50px', color: '#1a1a1a', margin: 0, fontWeight: 'bold' }}>{userName.toUpperCase()}</h2>
+                        <p style={{ fontSize: '24px', color: '#666', fontStyle: 'italic' }}>adlı çalışanımıza;</p>
+                        <div style={{ padding: '30px', backgroundColor: '#f9fafb', borderRadius: '30px', border: '2px solid #f3f4f6' }}>
+                            <h3 style={{ fontSize: '36px', color: '#E30613', margin: 0, fontWeight: '900' }}>{trainingName}</h3>
+                        </div>
+                        <p style={{ fontSize: '22px', color: '#4b5563', maxWidth: '800px', lineHeight: '1.6' }}>
+                            başlıklı eğitimi ve bu eğitime ait değerlendirme sınavını başarıyla tamamlayarak, bu sertifikayı kazanmaya hak kazandığı için verilmiştir.
+                        </p>
+                    </div>
+
+                    <div style={{ width: '100%', display: 'flex', justifyContent: 'space-between', alignItems: 'flex-end', padding: '0 40px' }}>
+                        <div style={{ textAlign: 'center' }}>
+                            <p style={{ fontSize: '24px', fontWeight: 'bold', borderBottom: '2px solid #e5e7eb', paddingBottom: '10px', marginBottom: '10px', minWidth: '200px' }}>{date}</p>
+                            <p style={{ fontSize: '12px', color: '#9ca3af', textTransform: 'uppercase', fontWeight: 'bold', letterSpacing: '2px' }}>Tarih</p>
+                        </div>
+                        <div style={{ textAlign: 'center' }}>
+                             <p style={{ fontSize: '12px', color: '#9ca3af', fontWeight: 'bold', textTransform: 'uppercase', marginBottom: '10px' }}>Doğrulama Kodu</p>
+                             <p style={{ fontSize: '14px', fontFamily: 'monospace', padding: '10px 20px', backgroundColor: '#f9fafb', border: '1px solid #e5e7eb', borderRadius: '8px' }}>{certNumber}</p>
+                        </div>
+                    </div>
+                </div>
             </div>
         </div>
     );
