@@ -2,7 +2,7 @@ const oracledb = require('oracledb');
 const { PrismaClient } = require('@prisma/client');
 const prisma = new PrismaClient();
 
-async function syncIfsLeave() {
+async function syncIfsLeaveOneByOne() {
   let connection;
 
   try {
@@ -13,55 +13,49 @@ async function syncIfsLeave() {
       connectString: "10.55.70.11:1521/PROD"
     });
 
-    console.log("IFS Bağlantısı Başarılı. Senkronizasyon başlıyor...");
+    console.log("IFS Bağlantısı Başarılı. TRIFM_IZINLER4 üzerinden tek tek veri çekiliyor...");
 
     // 2. Sistemdeki tüm personelleri çek
     const users = await prisma.user.findMany({
       where: { sicil_no: { not: null } }
     });
 
-    console.log(`${users.length} personel için veri güncellenecek.`);
-
-    const companyId = 'BORSAN';
-    const today = new Date();
-    const izinKodu = '01'; // Yıllık İzin Kodu
+    console.log(`${users.length} personel için güncelleniyor...`);
 
     for (const user of users) {
       try {
-        // IFS API'den verileri çek
-        const resHakedilen = await connection.execute(
-          `SELECT IFSAPP.TRIFM_IZINLER_API.GET_HAKEDILEN(:comp, :emp, :tarih) FROM DUAL`,
-          { comp: companyId, emp: user.sicil_no, tarih: today }
+        const result = await connection.execute(
+          `SELECT TOPLAM_HAKETTIGI_IZIN, TOPLAM_KULLANDIGI_IZIN, KALAN_IZIN 
+           FROM IFSAPP.TRIFM_IZINLER4 
+           WHERE EMP_NO = :emp AND COMPANY_ID = 'BORSAN'
+           FETCH FIRST 1 ROWS ONLY`,
+          { emp: user.sicil_no },
+          { outFormat: oracledb.OUT_FORMAT_OBJECT }
         );
 
-        const resKullanilan = await connection.execute(
-          `SELECT IFSAPP.TRIFM_IZINLER_API.GET_IZIN_KULLANILAN(:comp, :emp, :kod, :tarih) FROM DUAL`,
-          { comp: companyId, emp: user.sicil_no, kod: izinKodu, tarih: today }
-        );
+        if (result.rows.length > 0) {
+            const row = result.rows[0];
+            const hakedilen = parseFloat(row.TOPLAM_HAKETTIGI_IZIN) || 0;
+            const kullanilan = Math.abs(parseFloat(row.TOPLAM_KULLANDIGI_IZIN)) || 0;
+            const kalan = parseFloat(row.KALAN_IZIN) || 0;
 
-        const resKalan = await connection.execute(
-          `SELECT IFSAPP.TRIFM_IZINLER_API.GET_IZIN_LIMIT(:comp, :emp, :kod, :tarih) FROM DUAL`,
-          { comp: companyId, emp: user.sicil_no, kod: izinKodu, tarih: today }
-        );
+            // Prisma'da güncelle
+            await prisma.user.update({
+              where: { id: user.id },
+              data: {
+                annual_leave_entitled: hakedilen,
+                annual_leave_used: kullanilan,
+                annual_leave_remaining: kalan
+              }
+            });
 
-        const hakedilen = resHakedilen.rows[0][0] || 0;
-        const kullanilan = resKullanilan.rows[0][0] || 0;
-        const kalan = hakedilen - kullanilan;
+            console.log(`Güncellendi: ${user.name} (${user.sicil_no}) -> Hak: ${hakedilen}, Kul: ${kullanilan}, Kalan: ${kalan}`);
+        } else {
+            console.warn(`Uyarı: ${user.name} (${user.sicil_no}) için özet veri bulunamadı.`);
+        }
 
-        // Prisma'da güncelle
-        await prisma.user.update({
-          where: { id: user.id },
-          data: {
-            annual_leave_entitled: hakedilen,
-            annual_leave_used: kullanilan,
-            annual_leave_remaining: kalan
-          }
-        });
-
-        console.log(`Güncellendi: ${user.name} (${user.sicil_no}) -> Hak: ${hakedilen}, Kul: ${kullanilan}, Kalan: ${kalan}`);
-
-      } catch (userErr) {
-        console.error(`${user.name} (${user.sicil_no}) güncellenirken hata:`, userErr.message);
+      } catch (err) {
+        console.error(`${user.name} için hata:`, err.message);
       }
     }
 
@@ -77,4 +71,4 @@ async function syncIfsLeave() {
   }
 }
 
-syncIfsLeave();
+syncIfsLeaveOneByOne();
