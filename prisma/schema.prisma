@@ -54,6 +54,7 @@ model Training {
 
   progress    TrainingProgress[]
   exams       Exam[]
+  certificates Certificate[]
 }
 
 model TrainingProgress {
@@ -123,7 +124,8 @@ model Certificate {
   url         String
   issued_at   DateTime @default(now())
 
-  user User @relation(fields: [user_id], references: [id], onDelete: Cascade)
+  user     User     @relation(fields: [user_id], references: [id], onDelete: Cascade)
+  training Training @relation(fields: [training_id], references: [id], onDelete: Cascade)
 }
 
 model Badge {

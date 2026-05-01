@@ -13,7 +13,7 @@ export default async function ProfilePage() {
         where: { id: session!.user.id },
         include: { 
             user_badges: { include: { badge: true } }, 
-            certificates: true,
+            certificates: { include: { training: true } },
             performance_evals: {
                 include: { metrics: true },
                 orderBy: { evaluated_at: 'desc' }
@@ -158,15 +158,14 @@ export default async function ProfilePage() {
                         {user?.certificates.map(cert => (
                             <div key={cert.id} className="bg-white p-6 rounded-3xl shadow-soft border border-gray-50 flex justify-between items-center group transition-all hover:border-primary/20">
                                 <div>
-                                    <p className="font-bold text-secondary text-sm group-hover:text-primary transition-colors">Eğitim Sertifikası</p>
+                                    <p className="font-bold text-secondary text-sm group-hover:text-primary transition-colors">{cert.training.title}</p>
                                     <span className="text-[10px] text-gray-400 font-mono tracking-tighter">{cert.cert_number}</span>
                                 </div>
                                 <a 
                                     href={cert.url} 
-                                    target="_blank" 
                                     className="px-6 py-2 bg-surface hover:bg-primary hover:text-white text-secondary rounded-xl font-bold text-xs transition-all border border-gray-100 hover:border-primary"
                                 >
-                                    İndir
+                                    Görüntüle / İndir
                                 </a>
                             </div>
                         ))}

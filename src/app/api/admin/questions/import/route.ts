@@ -90,6 +90,10 @@ export async function POST(req: Request) {
             return NextResponse.json({ error: "Soru bulunamadı." }, { status: 400 })
         }
 
+        if (questionsData.length < 10 || questionsData.length > 20) {
+            return NextResponse.json({ error: `Bir sınavda en az 10, en fazla 20 soru olmalıdır. Sizin eklediğiniz soru sayısı: ${questionsData.length}` }, { status: 400 })
+        }
+
         // --- DATABASE OPERATIONS ---
         
         // 1. Create a Training record of type 'QUIZ'

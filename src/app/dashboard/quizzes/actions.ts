@@ -2,13 +2,11 @@
 import { prisma } from "@/lib/prisma"
 import { auth } from "@/auth"
 
-export async function submitQuizResults(score: number, category: string) {
+export async function submitQuizResults(score: number, category: string, examId?: string, trainingId?: string) {
     const session = await auth();
     if (!session) return { error: "Oturum süresi doldu." };
 
     // Update User XP
-    // Note: In a production app, we would verify the score on the server, 
-    // but for this MVP we trust the client-side calculated score.
     await prisma.user.update({
         where: { id: session.user.id },
         data: { xp_points: { increment: score } }
@@ -38,9 +36,50 @@ export async function submitQuizResults(score: number, category: string) {
         });
     }
 
-    // Record this as an 'EXAM_RESULT' or similar if we want history, 
-    // or just let it be a loose quiz.
-    // For now, we just give the XP.
+    // Process Official Exam Result and Certificate
+    if (examId && trainingId) {
+        // Calculate pass/fail (assuming threshold is 70 for now, or fetch from exam)
+        const isPassed = score >= 70; // Hardcoded 70% per user requirement for now
+
+        await prisma.examResult.create({
+            data: {
+                user_id: user!.id,
+                exam_id: examId,
+                score: score,
+                is_passed: isPassed
+            }
+        });
+
+        // If passed, mark training as complete and generate certificate
+        if (isPassed) {
+            // Update training progress to COMPLETED
+            await prisma.trainingProgress.upsert({
+                where: { user_id_training_id: { user_id: user!.id, training_id: trainingId } },
+                update: { status: 'COMPLETED', progress_percentage: 100 },
+                create: { user_id: user!.id, training_id: trainingId, status: 'COMPLETED', progress_percentage: 100 }
+            });
+
+            // Check if certificate already exists to avoid duplicates
+            const existingCert = await prisma.certificate.findFirst({
+                where: { user_id: user!.id, training_id: trainingId }
+            });
+
+            if (!existingCert) {
+                // Generate a unique, readable certificate number
+                const randomPart = Math.random().toString(36).substring(2, 6).toUpperCase();
+                const certNumber = `BRSN-${new Date().getFullYear()}-${randomPart}`;
+
+                await prisma.certificate.create({
+                    data: {
+                        user_id: user!.id,
+                        training_id: trainingId,
+                        cert_number: certNumber,
+                        url: `/dashboard/certificates/${certNumber}` // Dynamic URL pointing to the visual certificate
+                    }
+                });
+            }
+        }
+    }
 
     return { success: true }
 }

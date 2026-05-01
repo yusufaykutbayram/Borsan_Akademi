@@ -14,8 +14,13 @@ export default async function TrainingViewPage({ params }: any) {
     if (!session) redirect("/login")
     if (!id || id === 'undefined') return notFound()
 
-    const training = await prisma.training.findFirst({ where: { id } })
+    const training = await prisma.training.findFirst({ 
+        where: { id },
+        include: { exams: { select: { id: true } } }
+    })
     if (!training) return notFound()
+
+    const examId = training.exams.length > 0 ? training.exams[0].id : null;
 
     let progress = await prisma.trainingProgress.findUnique({
         where: { user_id_training_id: { user_id: session.user.id, training_id: id } }
@@ -56,6 +61,7 @@ export default async function TrainingViewPage({ params }: any) {
                 type={training.type}
                 initialProgress={progress.progress_percentage}
                 fileUrl={training.file_url || ""}
+                examId={examId}
             />
         </div>
     )

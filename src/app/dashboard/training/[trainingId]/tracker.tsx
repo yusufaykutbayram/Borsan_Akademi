@@ -20,9 +20,10 @@ interface TrackerProps {
     type: string
     initialProgress: number
     fileUrl: string
+    examId?: string | null
 }
 
-export default function TrainingTracker({ trainingId, userId, type, initialProgress, fileUrl }: TrackerProps) {
+export default function TrainingTracker({ trainingId, userId, type, initialProgress, fileUrl, examId }: TrackerProps) {
     const [progress, setProgress] = useState(initialProgress)
     const [isCompleted, setIsCompleted] = useState(initialProgress >= 100)
     const [timeLeft, setTimeLeft] = useState(type === 'REVEAL' ? 45 : 0)
@@ -192,8 +193,25 @@ export default function TrainingTracker({ trainingId, userId, type, initialProgr
                 )}
 
                 {isCompleted && (
-                    <div className="text-center text-emerald-500 font-bold flex items-center justify-center gap-2">
-                        <span className="text-xl">✓</span> Bu eğitimi başarıyla tamamladınız!
+                    <div className="text-center mt-6">
+                        {examId ? (
+                            <div className="space-y-4">
+                                <div className="text-emerald-500 font-bold flex items-center justify-center gap-2">
+                                    <span className="text-xl">✓</span> Eğitim içeriğini tamamladınız!
+                                </div>
+                                <p className="text-sm text-gray-500 mb-4">Sertifikanızı alabilmek için eğitimi bitirme sınavını başarıyla geçmeniz gerekmektedir.</p>
+                                <button 
+                                    onClick={() => window.location.href = `/dashboard/exam/${examId}`}
+                                    className="w-full bg-secondary hover:bg-black text-white py-4 rounded-xl font-bold text-sm transition-all shadow-lg shadow-secondary/20 uppercase tracking-widest"
+                                >
+                                    SINAVA BAŞLA
+                                </button>
+                            </div>
+                        ) : (
+                            <div className="text-emerald-500 font-bold flex items-center justify-center gap-2">
+                                <span className="text-xl">✓</span> Bu eğitimi başarıyla tamamladınız!
+                            </div>
+                        )}
                     </div>
                 )}
             </div>
