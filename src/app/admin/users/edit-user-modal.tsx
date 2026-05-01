@@ -14,6 +14,9 @@ interface User {
     xp_points: number
     start_date: Date | null
     force_pw_change: boolean
+    annual_leave_entitled: number | null
+    annual_leave_used: number | null
+    annual_leave_remaining: number | null
 }
 
 interface EditUserModalProps {
@@ -39,6 +42,9 @@ export function EditUserModal({ user, onClose }: EditUserModalProps) {
             position: formData.get("position"),
             role: formData.get("role"),
             xp_points: formData.get("xp_points"),
+            annual_leave_entitled: formData.get("annual_leave_entitled") ? parseFloat(formData.get("annual_leave_entitled") as string) : 0,
+            annual_leave_used: formData.get("annual_leave_used") ? parseFloat(formData.get("annual_leave_used") as string) : 0,
+            annual_leave_remaining: formData.get("annual_leave_remaining") ? parseFloat(formData.get("annual_leave_remaining") as string) : 0,
             force_pw_change: formData.get("force_pw_change") === "on",
         }
 
@@ -138,6 +144,18 @@ export function EditUserModal({ user, onClose }: EditUserModalProps) {
                         <div className="form-group">
                             <label className="form-label">XP Puanı</label>
                             <input className="input-field" type="number" name="xp_points" defaultValue={user.xp_points} />
+                        </div>
+                        <div className="form-group">
+                            <label className="form-label">Hak Edilen İzin</label>
+                            <input className="input-field" type="number" step="0.5" name="annual_leave_entitled" defaultValue={user.annual_leave_entitled || 0} />
+                        </div>
+                        <div className="form-group">
+                            <label className="form-label">Kullanılan İzin</label>
+                            <input className="input-field" type="number" step="0.5" name="annual_leave_used" defaultValue={user.annual_leave_used || 0} />
+                        </div>
+                        <div className="form-group">
+                            <label className="form-label">Kalan İzin (Gün)</label>
+                            <input className="input-field" type="number" step="0.5" name="annual_leave_remaining" defaultValue={user.annual_leave_remaining || 0} />
                         </div>
                         <div className="form-group">
                             <label className="form-label">İşe Giriş Tarihi</label>

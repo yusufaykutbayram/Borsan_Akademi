@@ -14,6 +14,9 @@ interface User {
     xp_points: number
     start_date: Date | null
     force_pw_change: boolean
+    annual_leave_entitled: number | null
+    annual_leave_used: number | null
+    annual_leave_remaining: number | null
 }
 
 interface UserTableClientProps {
@@ -35,6 +38,7 @@ export function UserTableClient({ users }: UserTableClientProps) {
                             <th style={{ padding: '16px 20px', color: 'var(--text-muted)', fontWeight: 500 }}>Rol</th>
                             <th style={{ padding: '16px 20px', color: 'var(--text-muted)', fontWeight: 500 }}>Pozisyon</th>
                             <th style={{ padding: '16px 20px', color: 'var(--text-muted)', fontWeight: 500 }}>XP</th>
+                            <th style={{ padding: '16px 20px', color: 'var(--text-muted)', fontWeight: 500 }}>İzin</th>
                             <th style={{ padding: '16px 20px', color: 'var(--text-muted)', fontWeight: 500, textAlign: 'right' }}>İşlemler</th>
                         </tr>
                     </thead>
@@ -61,6 +65,7 @@ export function UserTableClient({ users }: UserTableClientProps) {
                                 </td>
                                 <td style={{ padding: '16px 20px', fontSize: '13px' }}>{u.position || '-'}</td>
                                 <td style={{ padding: '16px 20px' }}>{u.xp_points} XP</td>
+                                <td style={{ padding: '16px 20px', fontWeight: 'bold' }}>{u.annual_leave_remaining || 0} G</td>
                                 <td style={{ padding: '16px 20px', textAlign: 'right' }}>
                                     <button 
                                         onClick={() => setSelectedUser(u)}

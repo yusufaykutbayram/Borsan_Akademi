@@ -69,6 +69,18 @@ export default async function ProfilePage() {
                         <p className="text-[10px] font-bold text-gray-400 uppercase tracking-widest mb-1">Rozetler</p>
                         <p className="text-2xl font-black text-secondary">{user?.user_badges.length}</p>
                     </div>
+                    <div className="px-6 py-3 bg-surface rounded-2xl border border-gray-100 min-w-[120px]">
+                        <p className="text-[10px] font-bold text-gray-400 uppercase tracking-widest mb-1">Hak Edilen</p>
+                        <p className="text-xl font-black text-secondary">{user?.annual_leave_entitled || 0} <span className="text-[10px] text-gray-400">GÜN</span></p>
+                    </div>
+                    <div className="px-6 py-3 bg-surface rounded-2xl border border-gray-100 min-w-[120px]">
+                        <p className="text-[10px] font-bold text-gray-400 uppercase tracking-widest mb-1">Kullanılan</p>
+                        <p className="text-xl font-black text-secondary">{user?.annual_leave_used || 0} <span className="text-[10px] text-gray-400">GÜN</span></p>
+                    </div>
+                    <div className="px-6 py-3 bg-red-50 rounded-2xl border border-red-100 min-w-[120px]">
+                        <p className="text-[10px] font-bold text-red-400 uppercase tracking-widest mb-1">Kalan İzin</p>
+                        <p className="text-xl font-black text-secondary">{user?.annual_leave_remaining || 0} <span className="text-[10px] text-red-500">GÜN</span></p>
+                    </div>
                 </div>
             </div>
 
