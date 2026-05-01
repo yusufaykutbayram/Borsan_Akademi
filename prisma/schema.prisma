@@ -207,11 +207,21 @@ model Feedback {
   id          String   @id @default(uuid())
   user_id     String
   type        String   // "SUGGESTION" or "NEAR_MISS"
+  title       String
   date        DateTime @default(now())
   department  String
   description String
+  status      String   @default("PENDING") // PENDING, APPROVED, REJECTED
   xp_awarded  Int      @default(0)
   created_at  DateTime @default(now())
 
   user User @relation(fields: [user_id], references: [id], onDelete: Cascade)
+}
+
+model SystemSetting {
+  id          String   @id @default(uuid())
+  key         String   @unique
+  value       String
+  description String?
+  updated_at  DateTime @updatedAt
 }

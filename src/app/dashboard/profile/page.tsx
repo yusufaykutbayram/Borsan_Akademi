@@ -36,7 +36,10 @@ export default async function ProfilePage() {
     return (
         <div className="max-w-4xl mx-auto space-y-12 animate-fade-in pb-20">
             {/* Header / Avatar Section */}
-            <div className="bg-white rounded-[2.5rem] p-10 sm:p-12 shadow-soft border border-gray-100 flex flex-col items-center text-center">
+            <div className="bg-white rounded-[2.5rem] p-10 sm:p-12 shadow-soft border border-gray-100 flex flex-col items-center text-center relative">
+                <div className="absolute top-8 right-8">
+                    <FeedbackForm />
+                </div>
                 <ProfileImageUpload 
                     initialImage={user?.avatar_url || null} 
                     name={user?.name || ""} 
@@ -176,9 +179,6 @@ export default async function ProfilePage() {
                     </div>
                 </section>
             </div>
-
-            {/* Feedback Form Section */}
-            <FeedbackForm />
 
             {/* Password Change Section */}
             <PasswordChangeForm />

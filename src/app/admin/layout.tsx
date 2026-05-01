@@ -26,6 +26,8 @@ export default async function AdminLayout({ children }: { children: React.ReactN
                     <Link href="/admin/users" style={{ padding: '12px', borderRadius: '8px', color: 'var(--text-muted)' }}>Kullanıcı Yönetimi</Link>
                     <Link href="/admin/trainings" style={{ padding: '12px', borderRadius: '8px', color: 'var(--text-muted)' }}>Eğitim İçerikleri</Link>
                     <Link href="/admin/questions" style={{ padding: '12px', borderRadius: '8px', color: 'var(--text-muted)' }}>Soru Bankası</Link>
+                    <Link href="/admin/feedback" style={{ padding: '12px', borderRadius: '8px', color: 'var(--text-muted)' }}>Öneri / Ramak Kala</Link>
+                    <Link href="/admin/settings" style={{ padding: '12px', borderRadius: '8px', color: 'var(--text-muted)' }}>Sistem Ayarları</Link>
                     <Link href="/dashboard/ai-chat" style={{ padding: '12px', borderRadius: '8px', color: 'var(--secondary)', fontWeight: 'bold', display: 'flex', alignItems: 'center', gap: '8px' }}>
                         <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
                             <rect width="16" height="12" x="4" y="8" rx="2"></rect>
