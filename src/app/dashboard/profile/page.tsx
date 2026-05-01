@@ -87,6 +87,15 @@ export default async function ProfilePage() {
                         <p className="text-[10px] font-bold text-red-400 uppercase tracking-widest mb-1">Kalan İzin</p>
                         <p className="text-xl font-black text-secondary">{user?.annual_leave_remaining || 0} <span className="text-[10px] text-red-500">GÜN</span></p>
                     </div>
+                    <div className="px-6 py-3 bg-blue-50 rounded-2xl border border-blue-100 min-w-[140px]">
+                        <p className="text-[10px] font-bold text-blue-400 uppercase tracking-widest mb-1">Hak Ediş Tarihi</p>
+                        <p className="text-sm font-black text-secondary">
+                            {user?.annual_leave_entitlement_date 
+                                ? new Date(user.annual_leave_entitlement_date).toLocaleDateString('tr-TR')
+                                : "-"
+                            }
+                        </p>
+                    </div>
                 </div>
             </div>
 

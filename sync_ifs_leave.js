@@ -2,7 +2,7 @@ const oracledb = require('oracledb');
 const { PrismaClient } = require('@prisma/client');
 const prisma = new PrismaClient();
 
-async function syncIfsLeaveOneByOne() {
+async function syncIfsLeaveOneByOneFinal() {
   let connection;
 
   try {
@@ -13,18 +13,20 @@ async function syncIfsLeaveOneByOne() {
       connectString: "10.55.70.11:1521/PROD"
     });
 
-    console.log("IFS Bağlantısı Başarılı. TRIFM_IZINLER4 üzerinden tek tek veri çekiliyor...");
+    console.log("IFS Bağlantısı Başarılı. Tek tek veri çekiliyor...");
 
-    // 2. Sistemdeki tüm personelleri çek
+    // 2. Sistemdeki personelleri al
     const users = await prisma.user.findMany({
-      where: { sicil_no: { not: null } }
+      where: { sicil_no: { not: null } },
+      select: { id: true, name: true, sicil_no: true }
     });
 
-    console.log(`${users.length} personel için güncelleniyor...`);
+    console.log(`${users.length} personel güncelleniyor...`);
 
     for (const user of users) {
       try {
-        const result = await connection.execute(
+        // Özet Veri (TRIFM_IZINLER4)
+        const resSummary = await connection.execute(
           `SELECT TOPLAM_HAKETTIGI_IZIN, TOPLAM_KULLANDIGI_IZIN, KALAN_IZIN 
            FROM IFSAPP.TRIFM_IZINLER4 
            WHERE EMP_NO = :emp AND COMPANY_ID = 'BORSAN'
@@ -33,26 +35,34 @@ async function syncIfsLeaveOneByOne() {
           { outFormat: oracledb.OUT_FORMAT_OBJECT }
         );
 
-        if (result.rows.length > 0) {
-            const row = result.rows[0];
-            const hakedilen = parseFloat(row.TOPLAM_HAKETTIGI_IZIN) || 0;
-            const kullanilan = Math.abs(parseFloat(row.TOPLAM_KULLANDIGI_IZIN)) || 0;
-            const kalan = parseFloat(row.KALAN_IZIN) || 0;
+        // Hak Ediş Tarihi (TRIFM_IZINLER3)
+        const resDate = await connection.execute(
+          `SELECT MAX(HAK_TAR) as HAK_TAR 
+           FROM IFSAPP.TRIFM_IZINLER3 
+           WHERE EMP_NO = :emp AND COMPANY_ID = 'BORSAN'
+           GROUP BY EMP_NO`,
+          { emp: user.sicil_no },
+          { outFormat: oracledb.OUT_FORMAT_OBJECT }
+        );
 
-            // Prisma'da güncelle
-            await prisma.user.update({
-              where: { id: user.id },
-              data: {
-                annual_leave_entitled: hakedilen,
-                annual_leave_used: kullanilan,
-                annual_leave_remaining: kalan
-              }
-            });
+        const summary = resSummary.rows[0];
+        const hakTar = resDate.rows[0]?.HAK_TAR;
 
-            console.log(`Güncellendi: ${user.name} (${user.sicil_no}) -> Hak: ${hakedilen}, Kul: ${kullanilan}, Kalan: ${kalan}`);
-        } else {
-            console.warn(`Uyarı: ${user.name} (${user.sicil_no}) için özet veri bulunamadı.`);
-        }
+        const hakedilen = parseFloat(summary?.TOPLAM_HAKETTIGI_IZIN) || 0;
+        const kullanilan = Math.abs(parseFloat(summary?.TOPLAM_KULLANDIGI_IZIN)) || 0;
+        const kalan = parseFloat(summary?.KALAN_IZIN) || 0;
+
+        await prisma.user.update({
+          where: { id: user.id },
+          data: {
+            annual_leave_entitled: hakedilen,
+            annual_leave_used: kullanilan,
+            annual_leave_remaining: kalan,
+            annual_leave_entitlement_date: hakTar ? new Date(hakTar) : null
+          }
+        });
+
+        console.log(`Güncellendi: ${user.name} (${user.sicil_no}) -> Hak: ${hakedilen}, Kul: ${kullanilan}, Kalan: ${kalan}, Hak.Tar: ${hakTar ? new Date(hakTar).toLocaleDateString('tr-TR') : '-'}`);
 
       } catch (err) {
         console.error(`${user.name} için hata:`, err.message);
@@ -71,4 +81,4 @@ async function syncIfsLeaveOneByOne() {
   }
 }
 
-syncIfsLeaveOneByOne();
+syncIfsLeaveOneByOneFinal();

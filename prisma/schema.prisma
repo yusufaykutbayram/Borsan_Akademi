@@ -29,6 +29,7 @@ model User {
   annual_leave_entitled Float? @default(0)
   annual_leave_used     Float? @default(0)
   annual_leave_remaining Float? @default(0)
+  annual_leave_entitlement_date DateTime?
   created_at       DateTime @default(now())
 
   // Relations
