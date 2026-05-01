@@ -2,26 +2,30 @@ const { PrismaClient } = require('@prisma/client');
 const bcrypt = require('bcryptjs');
 const prisma = new PrismaClient();
 
-async function main() {
-  const users = await prisma.user.findMany({ where: { role: 'ADMIN' } });
-  console.log('=== ADMIN KULLANICILARI ===');
-  console.log('Toplam admin sayısı:', users.length);
+async function testLogin(name, password) {
+  console.log(`Testing login for: ${name} with password: ${password}`);
+  const users = await prisma.user.findMany({
+    where: {
+      OR: [
+        { name: { equals: name, mode: 'insensitive' } },
+        { tc_number: { equals: name, mode: 'insensitive' } },
+        { sicil_no: { equals: name, mode: 'insensitive' } }
+      ]
+    }
+  });
+
+  console.log(`Found ${users.length} matching users.`);
   
-  for (const u of users) {
-    console.log('---');
-    console.log('Ad:', u.name);
-    console.log('TC:', u.tc_number);
-    console.log('Rol:', u.role);
-    console.log('force_pw_change:', u.force_pw_change);
-    
-    // Şifre testi
-    const test1 = await bcrypt.compare('AdminBorsan2026!', u.password_hash);
-    const test2 = await bcrypt.compare('123456', u.password_hash);
-    const test3 = await bcrypt.compare('Borsan2026', u.password_hash);
-    console.log('AdminBorsan2026! eşleşiyor mu:', test1);
-    console.log('123456 eşleşiyor mu:', test2);
-    console.log('Borsan2026 eşleşiyor mu:', test3);
+  for (const user of users) {
+    console.log(`Checking user: ${user.name} (TC: ${user.tc_number}, Sicil: ${user.sicil_no})`);
+    const isPasswordValid = await bcrypt.compare(password, user.password_hash);
+    console.log(`Password valid: ${isPasswordValid}`);
   }
+}
+
+async function main() {
+  await testLogin('admin', 'admin');
+  await testLogin('Admin', 'admin');
 }
 
 main().catch(console.error).finally(() => prisma.$disconnect());

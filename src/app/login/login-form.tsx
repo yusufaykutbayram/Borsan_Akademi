@@ -42,7 +42,6 @@ export function LoginForm() {
           id="password" 
           name="password" 
           type="password" 
-          maxLength={6}
           required 
           placeholder="••••••" 
         />
