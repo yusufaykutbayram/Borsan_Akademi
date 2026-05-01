@@ -50,7 +50,7 @@ export default async function AdminQuestionsPage() {
                         <p className="text-gray-400">Henüz bir quiz yüklenmedi. Yukarıdaki alanı kullanarak ilk quizi oluşturun.</p>
                     </div>
                 ) : (
-                    <QuizListAdmin quizGroups={quizTrainings} />
+                    <QuizListAdmin quizGroups={quizTrainings as any} />
                 )}
             </section>
         </div>
