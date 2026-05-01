@@ -1,7 +1,9 @@
 'use client'
 
-import { useFormState, useFormStatus } from 'react-dom'
+import { useActionState, useEffect } from 'react'
+import { useFormStatus } from 'react-dom'
 import { authenticate } from './actions'
+import { useRouter } from 'next/navigation'
 
 function LoginButton() {
   const { pending } = useFormStatus()
@@ -19,26 +21,41 @@ function LoginButton() {
 }
 
 export function LoginForm() {
-  const [errorMessage, dispatch] = useFormState(authenticate, undefined)
+  const [errorMessage, dispatch] = useActionState(authenticate, undefined)
+  const router = useRouter()
+
+  useEffect(() => {
+    if (errorMessage === undefined && !document.querySelector('.bg-red-50')) {
+      // If no error message and we just submitted, it might be successful
+      // Since we can't easily tell success from useActionState without a specific state,
+      // we rely on the action to redirect or we do it here if we can detect it.
+    }
+  }, [errorMessage])
 
   return (
-    <form action={dispatch} className="space-y-6">
+    <form action={async (formData) => {
+      const result = await dispatch(formData);
+      if (!result) {
+        // Success! Redirect to home or dashboard
+        window.location.href = '/';
+      }
+    }} className="space-y-6">
       <div className="space-y-2">
-        <label className="text-xs font-bold text-gray-400 uppercase tracking-widest ml-1" htmlFor="name">Ad Soyad</label>
+        <label className="text-xs font-bold text-gray-400 uppercase tracking-widest ml-1" htmlFor="name">Ad Soyad veya ID</label>
         <input 
           className="w-full bg-gray-50 border border-gray-100 rounded-xl px-5 py-4 text-gray-900 placeholder-gray-300 focus:outline-none focus:ring-2 focus:ring-red-500/20 focus:border-red-500 transition-all font-medium" 
           id="name" 
           name="name" 
           type="text" 
           required 
-          placeholder="Örn: Ahmet Yılmaz" 
+          placeholder="Örn: admin veya 555555" 
         />
       </div>
       
       <div className="space-y-2">
-        <label className="text-xs font-bold text-gray-400 uppercase tracking-widest ml-1" htmlFor="password">Şifre (TC Kimlik No İlk 6 Hane)</label>
+        <label className="text-xs font-bold text-gray-400 uppercase tracking-widest ml-1" htmlFor="password">Şifre</label>
         <input 
-          className="w-full bg-gray-50 border border-gray-100 rounded-xl px-5 py-4 text-gray-900 placeholder-gray-300 focus:outline-none focus:ring-2 focus:ring-red-500/20 focus:border-red-500 transition-all font-mono" 
+          className="w-full bg-gray-50 border border-gray-100 rounded-xl px-5 py-4 text-gray-900 placeholder-gray-300 focus:outline-none focus:ring-2 focus:ring-red-500/20 focus:border-red-500 transition-all" 
           id="password" 
           name="password" 
           type="password" 

@@ -8,8 +8,22 @@ export async function authenticate(
   formData: FormData,
 ) {
   try {
-    // NextAuth handles the redirect upon successful sign in
-    await signIn('credentials', Object.fromEntries(formData))
+    const name = formData.get('name');
+    const password = formData.get('password');
+    
+    console.log('Action received - Name:', name, 'Password length:', password?.toString().length);
+    
+    if (!name || !password) {
+      return 'Lütfen tüm alanları doldurun.';
+    }
+
+    await signIn('credentials', {
+      name: name as string,
+      password: password as string,
+      redirect: false,
+    });
+    
+    return undefined;
   } catch (error) {
     if (error instanceof AuthError) {
       switch (error.type) {
