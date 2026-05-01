@@ -42,7 +42,7 @@ export default async function LoginPage() {
         </div>
         
         <p className="text-center text-[10px] text-gray-400 mt-8 font-medium uppercase tracking-widest">
-            © 2026 Borsan Kablo. Tüm hakları saklıdır.
+            © 2026 Borsan Kablo. Tüm hakları saklıdır. (v1.1)
         </p>
       </div>
     </main>
