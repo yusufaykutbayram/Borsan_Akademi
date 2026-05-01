@@ -28,18 +28,26 @@ export function CertificateViewer({ certNumber, userName, trainingName, date, do
             btn.setAttribute('disabled', 'true');
 
             try {
+                // Scroll to top to avoid clipping issues with fixed elements
+                window.scrollTo(0, 0);
+
                 // Temporarily show the export element to capture it
                 const el = exportRef.current;
                 el.style.display = 'block';
-                el.style.position = 'fixed';
-                el.style.left = '-9999px';
+                el.style.position = 'absolute';
+                el.style.left = '0';
                 el.style.top = '0';
+                el.style.zIndex = '-9999';
 
                 const canvas = await html2canvas(el, {
                     scale: 2,
                     useCORS: true,
                     backgroundColor: '#ffffff',
                     logging: false,
+                    width: 1123,
+                    height: 794,
+                    windowWidth: 1123,
+                    windowHeight: 794
                 });
 
                 el.style.display = 'none';

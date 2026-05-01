@@ -38,8 +38,8 @@ export default async function ProfilePage() {
         <div className="max-w-4xl mx-auto space-y-12 animate-fade-in pb-20">
             {/* Header / Avatar Section */}
             <div className="bg-white rounded-[2.5rem] p-6 sm:p-12 shadow-soft border border-gray-100 flex flex-col items-center text-center relative overflow-hidden">
-                {/* Responsive Feedback Button - Relative on mobile, absolute on desktop */}
-                <div className="w-full flex justify-end sm:absolute sm:top-8 sm:right-8 sm:w-auto mb-4 sm:mb-0">
+                {/* Responsive Feedback Button - Centered on mobile, absolute on desktop */}
+                <div className="w-full flex justify-center sm:absolute sm:top-8 sm:right-8 sm:w-auto mb-6 sm:mb-0">
                     <FeedbackForm />
                 </div>
 

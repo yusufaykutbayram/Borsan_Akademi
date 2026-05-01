@@ -75,11 +75,11 @@ export function FeedbackForm() {
             </button>
 
             {open && (
-                <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/50 backdrop-blur-sm animate-fade-in">
-                    <div className="w-full max-w-2xl bg-white rounded-[2.5rem] p-10 shadow-2xl overflow-hidden relative">
+                <div className="fixed inset-0 z-50 flex items-center justify-center p-2 sm:p-4 bg-black/60 backdrop-blur-sm animate-fade-in overflow-y-auto">
+                    <div className="w-full max-w-2xl bg-white rounded-[2rem] sm:rounded-[2.5rem] p-6 sm:p-10 shadow-2xl relative my-auto">
                         <button 
                             onClick={() => setOpen(false)}
-                            className="absolute top-6 right-6 w-10 h-10 bg-gray-50 text-gray-400 hover:text-secondary rounded-full flex items-center justify-center transition-all hover:bg-gray-100"
+                            className="absolute top-4 right-4 sm:top-6 sm:right-6 w-8 h-8 sm:w-10 sm:h-10 bg-gray-50 text-gray-400 hover:text-secondary rounded-full flex items-center justify-center transition-all hover:bg-gray-100 z-10"
                         >
                             ✕
                         </button>
