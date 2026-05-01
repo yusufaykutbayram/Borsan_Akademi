@@ -18,7 +18,7 @@ interface Question {
 interface QuizGroup {
     id: string
     title: string
-    category: string
+    category?: string
     exams: {
         questions: Question[]
     }[]
